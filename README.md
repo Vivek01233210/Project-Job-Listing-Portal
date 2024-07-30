@@ -23,7 +23,12 @@ postings and applications seamlessly
     ```
 3. Install dependencies:
     ```sh
-    npm install
+    npm run install
     ```
+4. Start the application:
+    ```sh
+    npm run dev
+    ```
+
 
 ## Usage
