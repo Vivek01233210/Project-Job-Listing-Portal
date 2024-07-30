@@ -14,7 +14,7 @@ postings and applications seamlessly
     ```sh
     git clone https://github.com/Vivek01233210/Project-Job-Listing-Portal
     ```
-3. Install dependencies on the root of the project:
+3. Install dependencies run the command at the root of the project to install all the dependencies:
     ```sh
     npm run install
     ```
