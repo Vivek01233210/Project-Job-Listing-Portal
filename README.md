@@ -14,14 +14,7 @@ postings and applications seamlessly
     ```sh
     git clone https://github.com/Vivek01233210/Project-Job-Listing-Portal
     ```
-2. Navigate to the project directory:
-    ```sh
-    cd client
-    npm install
-    cd ../server
-    npm install
-    ```
-3. Install dependencies:
+3. Install dependencies on the root of the project:
     ```sh
     npm run install
     ```
