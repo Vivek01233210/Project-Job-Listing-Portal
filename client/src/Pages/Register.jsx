@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export default function Register() {
     // State variables for form fields
-    const [username, setUsername] = useState('');
+    const [fullName, setFullName] = useState('');
     const [role, setRole] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -11,7 +11,7 @@ export default function Register() {
         event.preventDefault();
         // Form data to be submitted
         const formData = {
-            username,
+            fullName,
             role,
             email,
             password
@@ -23,13 +23,13 @@ export default function Register() {
         <div className="container-sm my-4">
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="username" className="form-label">Username</label>
+                    <label htmlFor="fullName" className="form-label">Full Name</label>
                     <input
                         type="text"
                         className="form-control"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        id="fullName"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                         required
                     />
                 </div>

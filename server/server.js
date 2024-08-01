@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
 
@@ -35,8 +36,7 @@ app.get('/', (req, res) => {
     res.send('Server is running!');
 });
 
-// app.use("/api/v1/user", userRouter);
-
+app.use("/api/v1/user", userRouter);
 
 // NOT FOUND MIDDLEWARE
 app.use('*', (req, res) => {

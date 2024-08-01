@@ -1,9 +1,8 @@
-import Navbar from "./components/Navbar/Navbar.jsx";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Login from "./components/Pages/Login.jsx";
-import Register from "./components/Pages/Register.jsx";
-import MainLayout from "./components/Pages/MainLayout.jsx";
-import Home from "./components/Pages/Home.jsx";
+import Login from "./Pages/Login.jsx";
+import Register from "./Pages/Register.jsx";
+import MainLayout from "./Pages/MainLayout.jsx";
+import Home from "./Pages/Home.jsx";
 
 const router = createBrowserRouter([
   {
