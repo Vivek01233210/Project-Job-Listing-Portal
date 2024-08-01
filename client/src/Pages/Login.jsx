@@ -1,37 +1,35 @@
+import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import { loginAPI } from '../APIServices/userAPI.js';
+import { toast } from 'react-toastify';
 
 export default function Login() {
     // State variables for form fields
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    // const loginMutation = useMutation({
-    //     mutationKey: ["login"],
-    //     mutationFn: loginAPI,
-    // });
+    const loginMutation = useMutation({
+        mutationKey: ["login"],
+        mutationFn: loginAPI,
+    });
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     loginMutation
-    //         .mutateAsync(userData)
-    //         .then((data) => dispatch(isAuthenticated(data)))
-    //         .then(() => navigate("/"))
-    //         .catch((err) => console.log(err.response.data.error));
-    // };
-
-    // const { isPending, error, isError } = loginMutation;
-
-    // Handle form submission
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        // Form data to be submitted
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         const formData = {
             email,
             password
         };
         console.log('Form Data Submitted:', formData);
+        loginMutation
+            .mutateAsync(formData)
+            .then(() => toast.success("User logged in successfully! 😊"))
+            // .then((data) => dispatch(isAuthenticated(data)))
+            // .then(() => navigate("/"))
+            .catch((err) => toast.error(err.response.data.error));
     };
 
+    const { isPending, error, isError } = loginMutation;
+   
     return (
         <div className="container-sm my-4">
             <form onSubmit={handleSubmit}>
@@ -59,7 +57,7 @@ export default function Login() {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Login</button>
+                <button type="submit" className="btn btn-primary" disabled={isPending}>Login</button>
             </form>
         </div>
     );

@@ -12,7 +12,7 @@ export const register = async (req, res) => {
 
     // check if the user exists
     const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ error: 'User already exists' });
+    if (userExists) return res.status(400).json({ error: 'User with this email already exists' });
 
     // hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -26,12 +26,12 @@ export const register = async (req, res) => {
     });
 
     // send a token
-    // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-    // res.cookie('token', token, {
-    //     httpOnly: true,
-    //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1-day
-    //     secure: process.env.NODE_ENV === 'production',
-    // });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1-day
+        secure: process.env.NODE_ENV === 'production',
+    });
 
     return res.status(201).json({ isAuthenticated: true, user });
 };

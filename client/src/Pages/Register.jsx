@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { registerAPI } from '../APIServices/userAPI.js';
+import { toast } from 'react-toastify';
 
 export default function Register() {
     // State variables for form fields
@@ -29,23 +30,11 @@ export default function Register() {
             .mutateAsync(formData)
             // .then((data) => dispatch(isAuthenticated(data)))
             // .then(() => navigate("/"))
-            .then(() => console.log("User registered successfully! 😊"))
-            .catch((err) => console.log(err));
+            .then(() => toast.success("User registered successfully! 😊"))
+            .catch((err) => toast.error(err.response.data.error));
     };
 
-    // const { isPending, error, isError } = loginMutation;
-
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     // Form data to be submitted
-    //     const formData = {
-    //         fullName,
-    //         role,
-    //         email,
-    //         password
-    //     };
-    //     console.log('Form Data Submitted:', formData);
-    // };
+    const { isPending, error, isError } = registerMutation;
 
     return (
         <div className="container-sm my-4">
@@ -96,7 +85,7 @@ export default function Register() {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Register</button>
+                <button type="submit" className="btn btn-primary" disabled={isPending}>Register</button>
             </form>
         </div>
     );
