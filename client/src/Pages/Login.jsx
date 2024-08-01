@@ -5,6 +5,22 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    // const loginMutation = useMutation({
+    //     mutationKey: ["login"],
+    //     mutationFn: loginAPI,
+    // });
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     loginMutation
+    //         .mutateAsync(userData)
+    //         .then((data) => dispatch(isAuthenticated(data)))
+    //         .then(() => navigate("/"))
+    //         .catch((err) => console.log(err.response.data.error));
+    // };
+
+    // const { isPending, error, isError } = loginMutation;
+
     // Handle form submission
     const handleSubmit = (event) => {
         event.preventDefault();

@@ -2,6 +2,40 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+// make a register controller
+export const register = async (req, res) => {
+    const { fullName, role, email, password } = req.body;
+    // console.log(req.body);
+    if (!fullName || !role || !email || !password) {
+        return res.status(400).json({ error: 'Please provide all fields' });
+    }
+
+    // check if the user exists
+    const userExists = await User.findOne({ email });
+    if (userExists) return res.status(400).json({ error: 'User already exists' });
+
+    // hash the password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // save the user
+    const user = await User.create({
+        fullName,
+        role,
+        email,
+        password: hashedPassword,
+    });
+
+    // send a token
+    // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    // res.cookie('token', token, {
+    //     httpOnly: true,
+    //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1-day
+    //     secure: process.env.NODE_ENV === 'production',
+    // });
+
+    return res.status(201).json({ isAuthenticated: true, user });
+};
+
 export const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {

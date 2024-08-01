@@ -1,4 +1,6 @@
+import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import { registerAPI } from '../APIServices/userAPI.js';
 
 export default function Register() {
     // State variables for form fields
@@ -7,8 +9,13 @@ export default function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const registerMutation = useMutation({
+        mutationKey: ["login"],
+        mutationFn: registerAPI,
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         // Form data to be submitted
         const formData = {
             fullName,
@@ -16,8 +23,29 @@ export default function Register() {
             email,
             password
         };
-        console.log('Form Data Submitted:', formData);
+        // console.log('Form Data Submitted:', formData);
+
+        registerMutation
+            .mutateAsync(formData)
+            // .then((data) => dispatch(isAuthenticated(data)))
+            // .then(() => navigate("/"))
+            .then(() => console.log("User registered successfully! 😊"))
+            .catch((err) => console.log(err));
     };
+
+    // const { isPending, error, isError } = loginMutation;
+
+    // const handleSubmit = (event) => {
+    //     event.preventDefault();
+    //     // Form data to be submitted
+    //     const formData = {
+    //         fullName,
+    //         role,
+    //         email,
+    //         password
+    //     };
+    //     console.log('Form Data Submitted:', formData);
+    // };
 
     return (
         <div className="container-sm my-4">
@@ -41,8 +69,8 @@ export default function Register() {
                     required
                 >
                     <option value="" disabled>Select role</option>
-                    <option value="1">Employer</option>
-                    <option value="2">Job Seeker</option>
+                    <option value="employer">Employer</option>
+                    <option value="job-seeker">Job Seeker</option>
                 </select>
                 <div className="mb-3">
                     <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
