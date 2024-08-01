@@ -14,7 +14,6 @@ export default function Login() {
             password
         };
         console.log('Form Data Submitted:', formData);
-        // You can add your form submission logic here (e.g., API call)
     };
 
     return (
