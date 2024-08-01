@@ -34,10 +34,11 @@ export default function Register() {
             .catch((err) => toast.error(err.response.data.error));
     };
 
-    const { isPending, error, isError } = registerMutation;
+    const { isPending } = registerMutation;
 
     return (
         <div className="container-sm my-4">
+            <h1 className='text-center my-4'>Register</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="fullName" className="form-label">Full Name</label>

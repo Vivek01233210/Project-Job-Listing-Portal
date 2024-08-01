@@ -19,7 +19,7 @@ export default function Login() {
             email,
             password
         };
-        console.log('Form Data Submitted:', formData);
+        // console.log('Form Data Submitted:', formData);
         loginMutation
             .mutateAsync(formData)
             .then(() => toast.success("User logged in successfully! 😊"))
@@ -32,6 +32,7 @@ export default function Login() {
    
     return (
         <div className="container-sm my-4">
+            <h1 className='text-center my-4'>Login to continue</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
