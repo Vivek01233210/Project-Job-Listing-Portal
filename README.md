@@ -23,5 +23,4 @@ postings and applications seamlessly
     npm run dev
     ```
 
-
 ## Usage
