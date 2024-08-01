@@ -1,13 +1,21 @@
 import Navbar from "./components/Navbar/Navbar.jsx";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Home from "./components/Pages/MainLayout.jsx";
 import Login from "./components/Pages/Login.jsx";
 import Register from "./components/Pages/Register.jsx";
+import MainLayout from "./components/Pages/MainLayout.jsx";
+import Home from "./components/Pages/Home.jsx";
 
 const router = createBrowserRouter([
-  { path: '/', element: <Home /> },
-  { path: '/login', element: <Login /> },
-  { path: '/register', element: <Register /> },
+  {
+    path: '/',
+    element: <MainLayout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
+    ]
+
+  },
 ]);
 
 
