@@ -51,7 +51,7 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) return res.status(400).json({ error: 'Invalid credentials' });
 
     // save user in the req object
-    req.user = user;
+    req.user = { id: user._id, role: user.role, fullName: user.fullName, email: user.email };
 
     // send a token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -61,7 +61,10 @@ export const login = async (req, res) => {
         secure: process.env.NODE_ENV === 'production',
     });
 
-    return res.status(200).json({ isAuthenticated: true, user });
+    return res.status(200).json({
+        isAuthenticated: true,
+        user: { id: user._id, role: user.role, fullName: user.fullName, email: user.email }
+    });
 };
 
 // logout route

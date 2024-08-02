@@ -1,9 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { loginAPI } from '../APIServices/userAPI.js';
 import { toast } from 'react-toastify';
+import { isAuthenticated } from '../redux/slices/authSlice.js';
 
 export default function Login() {
+
+    const dispatch = useDispatch();
+
     // State variables for form fields
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,13 +27,13 @@ export default function Login() {
         // console.log('Form Data Submitted:', formData);
         loginMutation
             .mutateAsync(formData)
+            .then((data) => dispatch(isAuthenticated(data)))
             .then(() => toast.success("User logged in successfully! 😊"))
-            // .then((data) => dispatch(isAuthenticated(data)))
             // .then(() => navigate("/"))
             .catch((err) => toast.error(err.response.data.error));
     };
 
-    const { isPending, error, isError } = loginMutation;
+    const { isPending } = loginMutation;
    
     return (
         <div className="container-sm my-4">
