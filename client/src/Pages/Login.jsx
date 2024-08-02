@@ -4,11 +4,12 @@ import { useDispatch } from 'react-redux';
 import { loginAPI } from '../APIServices/userAPI.js';
 import { toast } from 'react-toastify';
 import { isAuthenticated } from '../redux/slices/authSlice.js';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     // State variables for form fields
     const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ export default function Login() {
             .mutateAsync(formData)
             .then((data) => dispatch(isAuthenticated(data)))
             .then(() => toast.success("User logged in successfully! 😊"))
-            // .then(() => navigate("/"))
+            .then(() => navigate("/dashboard"))
             .catch((err) => toast.error(err.response.data.error));
     };
 

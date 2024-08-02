@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Navbar() {
     return (
         <>
-            <nav className="bg-gray-100 fixed top-0 left-0 right-0 p-4 shadow-md">
+            <nav className="bg-gray-100 fixed top-0 left-0 right-0 p-4 z-20 shadow-md">
                 <div className="container mx-auto flex justify-between items-center">
                     <Link className="text-xl font-bold text-gray-800" to="/">Job Portal App</Link>
                     <button className="text-gray-800 md:hidden" type="button" aria-label="Toggle navigation">
