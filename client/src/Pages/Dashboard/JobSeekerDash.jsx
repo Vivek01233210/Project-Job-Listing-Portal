@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { CiUser } from "react-icons/ci";
+import { HiPencil } from "react-icons/hi2";
 
 export default function JobSeekerDash() {
+
+  const imageInputRef = useRef(null);
+
   const [profile, setProfile] = useState({
     profilePic: '',
     fullName: 'Vivek Kumar',
@@ -17,6 +22,8 @@ export default function JobSeekerDash() {
     resume: ''
   });
 
+  console.log(profile)
+
   const [isEditing, setIsEditing] = useState({
     profilePic: false,
     fullName: false,
@@ -28,25 +35,42 @@ export default function JobSeekerDash() {
     resume: false
   });
 
-//   useEffect(() => {
-//     // Fetch profile data from API
-//     axios.get('/api/jobseeker/profile')
-//       .then(response => {
-//         setProfile(response.data);
-//       })
-//       .catch(error => {
-//         console.error('Error fetching profile data:', error);
-//       });
-//   }, []);
+  //   useEffect(() => {
+  //     // Fetch profile data from API
+  //     axios.get('/api/jobseeker/profile')
+  //       .then(response => {
+  //         setProfile(response.data);
+  //       })
+  //       .catch(error => {
+  //         console.error('Error fetching profile data:', error);
+  //       });
+  //   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setProfile({ ...profile, [name]: files[0] });
+  const handleImageFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile({ ...profile, profilePic: reader.result });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
+    }
+  };
+
+  const handleResumeChange = (event) => {
+    const file = event.target.files[0];
+    if (file && (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+      setProfile({ ...profile, resume: file });
+    } else {
+      console.error('Invalid file type. Only .pdf and .docx files are allowed.');
+    }
   };
 
   const handleEditClick = (field) => {
@@ -69,16 +93,27 @@ export default function JobSeekerDash() {
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            <img src={profile.profilePic || 'https://via.placeholder.com/150'} alt="Profile" className="w-24 h-24 rounded-full" />
-            <button onClick={() => handleEditClick('profilePic')} className="absolute bottom-0 right-0 bg-gray-300 p-1 rounded-full">
-              ✏️
-            </button>
-            {isEditing.profilePic && (
-              <div className="mt-2">
-                <input type="file" name="profilePic" accept="image/*" onChange={handleFileChange} />
-                <button onClick={() => handleSave('profilePic')} className="bg-blue-500 text-white px-2 py-1 rounded">Save</button>
-              </div>
+            {profile.profilePic ? (
+              <img src={profile.profilePic} alt="Profile" className="w-24 h-24 rounded-full" />
+            ) : (
+              <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
             )}
+            {/* <img src={profile.profilePic || 'https://via.placeholder.com/150'} alt="Profile" className="w-24 h-24 rounded-full" /> */}
+            <button onClick={() => imageInputRef.current.click()} className="absolute bottom-0 right-0 bg-gray-300 p-1 rounded-full">
+              <HiPencil />
+            </button>
+            <div className="mt-2">
+              <input
+                type="file"
+                ref={imageInputRef}
+                className='hidden'
+                name="profilePic"
+                accept=".jpg,.jpeg,.png"
+                onChange={handleImageFileChange}
+              />
+              {/* <button onClick={() => handleSave('profilePic')} className="bg-blue-500 text-white px-2 py-1 rounded">Save</button> */}
+            </div>
+
           </div>
           <div className="ml-4">
             <h2 className="text-2xl font-bold">
@@ -88,7 +123,7 @@ export default function JobSeekerDash() {
                 profile.fullName
               )}
               <button onClick={() => handleEditClick('fullName')} className="ml-2 bg-gray-300 p-1 rounded-full">
-                ✏️
+                <HiPencil />
               </button>
             </h2>
             <p className="text-gray-600">
@@ -98,7 +133,7 @@ export default function JobSeekerDash() {
                 profile.headline
               )}
               <button onClick={() => handleEditClick('headline')} className="ml-2 bg-gray-300 p-1 rounded-full">
-                ✏️
+                <HiPencil />
               </button>
             </p>
           </div>
@@ -114,7 +149,7 @@ export default function JobSeekerDash() {
               <p>{profile.skills}</p>
             )}
             <button onClick={() => handleEditClick('skills')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
           <div className="mt-4">
@@ -125,7 +160,7 @@ export default function JobSeekerDash() {
               <p>{profile.description}</p>
             )}
             <button onClick={() => handleEditClick('description')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
         </div>
@@ -140,7 +175,7 @@ export default function JobSeekerDash() {
               <p>{profile.city}</p>
             )}
             <button onClick={() => handleEditClick('location')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
           <div className="mt-4">
@@ -151,7 +186,7 @@ export default function JobSeekerDash() {
               <p>{profile.state}</p>
             )}
             <button onClick={() => handleEditClick('location')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
           <div className="mt-4">
@@ -162,7 +197,7 @@ export default function JobSeekerDash() {
               <p>{profile.country}</p>
             )}
             <button onClick={() => handleEditClick('location')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
         </div>
@@ -170,36 +205,36 @@ export default function JobSeekerDash() {
         <div className="mb-6">
           <h3 className="text-xl font-bold mb-2">Contact</h3>
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700">Email Id:</label>
             {isEditing.contact ? (
               <input type="email" name="email" value={profile.email} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.email}</p>
             )}
             <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
           <div className="mt-4">
-            <label className="block text-gray-700">Mobile</label>
+            <label className="block text-gray-700">Mobile No:</label>
             {isEditing.contact ? (
               <input type="text" name="mobile" value={profile.mobile} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.mobile}</p>
             )}
             <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
           <div className="mt-4">
-            <label className="block text-gray-700">LinkedIn</label>
+            <label className="block text-gray-700">LinkedIn URL:</label>
             {isEditing.contact ? (
               <input type="url" name="linkedin" value={profile.linkedin} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.linkedin}</p>
             )}
             <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
         </div>
@@ -208,12 +243,12 @@ export default function JobSeekerDash() {
           <h3 className="text-xl font-bold mb-2">Upload Resume</h3>
           <div>
             {isEditing.resume ? (
-              <input type="file" name="resume" accept=".pdf,.docx" onChange={handleFileChange} className="border p-1 w-full" />
+              <input type="file" name="resume" accept=".pdf,.docx" onChange={handleResumeChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.resume ? profile.resume.name : 'No resume uploaded'}</p>
             )}
             <button onClick={() => handleEditClick('resume')} className="bg-gray-300 p-1 rounded-full">
-              ✏️
+              <HiPencil />
             </button>
           </div>
         </div>
