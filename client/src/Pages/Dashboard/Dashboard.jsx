@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 import JobSeekerDash from './JobSeekerDash.jsx';
+import EmployerDash from './EmployerDash.jsx';
 
 export default function Dashboard() {
 
@@ -9,7 +10,7 @@ export default function Dashboard() {
     if (isAuthenticated && user.role === 'job-seeker') {
         return <JobSeekerDash/>
     }else if (isAuthenticated && user.role === 'employer') {
-        return <h1>Employer Dashboard</h1>
+        return <EmployerDash/>
     }else{
         return <Navigate to="/login" />
     }
