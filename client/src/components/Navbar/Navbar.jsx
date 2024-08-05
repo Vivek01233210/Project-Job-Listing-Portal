@@ -1,6 +1,10 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
+
+    const { isAuthenticated, user } = useSelector((state) => state.auth);
+
     return (
         <>
             <nav className="bg-gray-100 fixed top-0 left-0 right-0 p-4 z-20 shadow-md">
@@ -13,12 +17,30 @@ export default function Navbar() {
                     </button>
                     <div className="hidden md:flex md:items-center md:space-x-6">
                         <ul className="flex flex-col md:flex-row md:space-x-4">
-                            <li className="nav-item">
-                                <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/login">Login</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/register">Register</Link>
-                            </li>
+                            {!isAuthenticated && (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/login">Login</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/register">Register</Link>
+                                    </li>
+                                </>
+                            )}
+                            {isAuthenticated && user.role === 'job-seeker' && (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/search-jobs">Search Jobs</Link>
+                                    </li>
+                                </>
+                            )}
+                            {isAuthenticated && (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/dashboard">Dashboard</Link>
+                                    </li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>

@@ -1,13 +1,21 @@
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { checkUserAPI } from '../APIServices/userAPI.js';
+import { useQuery } from '@tanstack/react-query';
 
-export default function Protect() {
-    const { isAuthenticated } = useSelector((state) => state.auth);
+const Protected = ({ children }) => {
 
-    if (isAuthenticated) {
-        return <Outlet />
-    } else {
-        return <h1>Access Denied!</h1>
-        // return <Navigate to="/login" />
-    }
-}
+    const { data, isLoading } = useQuery({
+      queryKey: ["user-auth"],
+      queryFn: checkUserAPI,
+    });
+  
+  
+    if (isLoading) return <h1>Loading...</h1>;
+  
+    if (!data) return <Navigate to='/login' />
+  
+    return children;
+  };
+  
+  export default Protected;

@@ -4,23 +4,58 @@ import Register from "./Pages/Register.jsx";
 import MainLayout from "./Pages/MainLayout.jsx";
 import Home from "./Pages/Home.jsx";
 import Dashboard from './Pages/Dashboard/Dashboard.jsx';
+import { useQuery } from '@tanstack/react-query';
+import { checkUserAPI } from './APIServices/userAPI.js';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser } from './redux/slices/authSlice.js';
+import Protect from './Pages/ProtectRoute.jsx';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> },
-      { path: 'dashboard', element: <Dashboard /> },
-    ]
 
-  },
-]);
 
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['check-user'],
+    queryFn: checkUserAPI,
+  })
+
+  const isAuthenticated = data?.isAuthenticated;
+  // console.log(data)
+
+  useEffect(() => {
+    if (data) {
+      dispatch(setUser(data));
+    }
+  }, [data])
+
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <MainLayout />,
+      children: [
+        // { index: true, element: <Home /> },
+        // { path: 'login', element: <Login /> },
+        // { path: 'register', element: <Register /> },
+        // { path: 'dashboard', element: <Dashboard />},
+        { index: true, element: <Home /> },
+        ...(!isAuthenticated ? [
+          { path: 'login', element: <Login /> },
+          { path: 'register', element: <Register /> },
+        ] : []),
+        { path: 'dashboard', element: <Dashboard /> },
+      ]
+
+    },
+  ]);
+
+  if (isLoading) {
+    return <h1>Loading...</h1>
+  }
+
   return (
     <>
       <RouterProvider router={router} />

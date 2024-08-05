@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
+import { toast } from 'react-toastify';
 
 export default function JobSeekerDash() {
 
@@ -22,7 +23,7 @@ export default function JobSeekerDash() {
     resume: ''
   });
 
-  console.log(profile)
+  // console.log(profile)
 
   const [isEditing, setIsEditing] = useState({
     profilePic: false,
@@ -60,7 +61,7 @@ export default function JobSeekerDash() {
       };
       reader.readAsDataURL(file);
     } else {
-      console.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
+      toast.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
     }
   };
 
@@ -69,7 +70,7 @@ export default function JobSeekerDash() {
     if (file && (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
       setProfile({ ...profile, resume: file });
     } else {
-      console.error('Invalid file type. Only .pdf and .docx files are allowed.');
+      toast.error('Invalid file type. Only .pdf and .docx files are allowed.');
     }
   };
 

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginAPI } from '../APIServices/userAPI.js';
 import { toast } from 'react-toastify';
-import { isAuthenticated } from '../redux/slices/authSlice.js';
+import { setUser } from '../redux/slices/authSlice.js';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
@@ -12,8 +12,8 @@ export default function Login() {
     const navigate = useNavigate();
 
     // State variables for form fields
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('user2@gmail.com');
+    const [password, setPassword] = useState('user2@123');
 
     const loginMutation = useMutation({
         mutationKey: ["login"],
@@ -29,7 +29,7 @@ export default function Login() {
         // console.log('Form Data Submitted:', formData);
         loginMutation
             .mutateAsync(formData)
-            .then((data) => dispatch(isAuthenticated(data)))
+            .then((data) => dispatch(setUser(data)))
             .then(() => toast.success("User logged in successfully! 😊"))
             .then(() => navigate("/dashboard"))
             .catch((err) => toast.error(err.response.data.error));
