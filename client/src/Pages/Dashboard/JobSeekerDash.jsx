@@ -3,8 +3,8 @@ import axios from 'axios';
 import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
-import { useQuery } from '@tanstack/react-query';
-import { getUserProfileAPI } from '../../APIServices/userAPI.js';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getUserProfileAPI, updateProfileAPI } from '../../APIServices/userAPI.js';
 
 export default function JobSeekerDash() {
 
@@ -14,14 +14,24 @@ export default function JobSeekerDash() {
     queryKey: ["user-auth"],
     queryFn: getUserProfileAPI,
   });
-  console.log(user);
+  // console.log(user);
 
   useEffect(() => {
     if (user) {
       setProfile(prevProfile => ({
         ...prevProfile,
         fullName: user?.user?.fullName || '',
-        email: user?.user?.email || ''
+        email: user?.user?.email || '',
+        profilePic: user?.user?.profilePic || '',
+        headline: user?.user?.headline || '',
+        skills: user?.user?.skills || '',
+        description: user?.user?.description || '',
+        city: user?.user?.city || '',
+        state: user?.user?.state || '',
+        country: user?.user?.country || '',
+        mobile: user?.user?.mobile || '',
+        linkedIn: user?.user?.linkedIn || '',
+        resume: user?.user?.resume || ''
       }));
     }
   }, [user]);
@@ -37,9 +47,11 @@ export default function JobSeekerDash() {
     country: '',
     email: '',
     mobile: '',
-    linkedin: '',
+    linkedIn: '',
     resume: ''
   });
+
+  const [showSaveButton, setShowSaveButton] = useState(false);
 
   // console.log(profile)
 
@@ -54,6 +66,9 @@ export default function JobSeekerDash() {
     resume: false
   });
 
+  useEffect(() => {
+    setShowSaveButton(true);
+  }, [profile]);
 
   //   useEffect(() => {
   //     // Fetch profile data from API
@@ -65,6 +80,18 @@ export default function JobSeekerDash() {
   //         console.error('Error fetching profile data:', error);
   //       });
   //   }, []);
+
+  const saveMutation = useMutation({
+    mutationKey: ["checkout"],
+    mutationFn: updateProfileAPI,
+  });
+
+  const handleSave = async (field) => {
+    saveMutation
+      .mutateAsync(profile)
+      .then(() => toast.success('Profile updated successfully'))
+    setIsEditing({ ...isEditing, [field]: false });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -97,22 +124,15 @@ export default function JobSeekerDash() {
     setIsEditing({ ...isEditing, [field]: !isEditing[field] });
   };
 
-  const handleSave = (field) => {
-    // Save the updated field to the server
-    axios.post(`/api/jobseeker/profile/${field}`, { [field]: profile[field] })
-      .then(response => {
-        setIsEditing({ ...isEditing, [field]: false });
-      })
-      .catch(error => {
-        console.error('Error saving profile data:', error);
-      });
-  };
-
   return (
     <div className="container mx-auto p-6 min-h-screen max-w-lg lg:max-w-2xl">
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
+            {showSaveButton && 
+            <button onClick={handleSave} >
+              Save
+              </button>}
             {profile.profilePic ? (
               <img src={profile.profilePic} alt="Profile" className="w-24 h-24 rounded-full" />
             ) : (
@@ -249,9 +269,9 @@ export default function JobSeekerDash() {
           <div className="mt-4">
             <label className="block text-gray-700">LinkedIn URL:</label>
             {isEditing.contact ? (
-              <input type="url" name="linkedin" value={profile.linkedin} onChange={handleInputChange} className="border p-1 w-full" />
+              <input type="url" name="linkedIn" value={profile.linkedIn} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
-              <p>{profile.linkedin}</p>
+              <p>{profile.linkedIn}</p>
             )}
             <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
               <HiPencil />

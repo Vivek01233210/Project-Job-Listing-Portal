@@ -21,6 +21,38 @@ const UserSchema = new mongoose.Schema(
             required: true,
             enum: ['employer', 'job-seeker'],
         },
+        skills: {
+            type: String,
+            default: "",
+        },
+        description: {
+            type: String,
+            default: "",
+        },
+        headline: {
+            type: String,
+            default: "",
+        },
+        city: {
+            type: String,
+            default: "",
+        },
+        state: {
+            type: String,
+            default: "",
+        },
+        country: {
+            type: String,
+            default: "",
+        },
+        mobile: {
+            type: String,
+            default: "",
+        },
+        linkedIn: {
+            type: String,
+            default: "",
+        },
     },
     {
         timestamps: true,

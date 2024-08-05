@@ -52,3 +52,11 @@ export const getUserProfileAPI = async () => {
 
     return response.data;
 };
+
+export const updateProfileAPI = async (userData) => {
+    // console.log(userData)
+    const response = await axios.put(`${baseUrl}/user/profile`, userData, {
+        withCredentials: true
+    });
+    return response.data;
+};
