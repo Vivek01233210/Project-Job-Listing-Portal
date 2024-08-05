@@ -97,3 +97,12 @@ export const checkUser = async (req, res, next) => {
         return res.status(401).json({ isAuthenticated: false, error });
     }
 };
+
+export const getUserProfile = async (req, res) => {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    return res.status(200).json({ user });
+}

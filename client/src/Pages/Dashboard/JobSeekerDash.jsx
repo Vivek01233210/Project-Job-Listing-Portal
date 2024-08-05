@@ -3,14 +3,32 @@ import axios from 'axios';
 import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
+import { getUserProfileAPI } from '../../APIServices/userAPI.js';
 
 export default function JobSeekerDash() {
 
   const imageInputRef = useRef(null);
 
+  const { data: user } = useQuery({
+    queryKey: ["user-auth"],
+    queryFn: getUserProfileAPI,
+  });
+  console.log(user);
+
+  useEffect(() => {
+    if (user) {
+      setProfile(prevProfile => ({
+        ...prevProfile,
+        fullName: user?.user?.fullName || '',
+        email: user?.user?.email || ''
+      }));
+    }
+  }, [user]);
+
   const [profile, setProfile] = useState({
     profilePic: '',
-    fullName: 'Vivek Kumar',
+    fullName: '',
     headline: '',
     skills: '',
     description: '',
@@ -35,6 +53,7 @@ export default function JobSeekerDash() {
     contact: false,
     resume: false
   });
+
 
   //   useEffect(() => {
   //     // Fetch profile data from API

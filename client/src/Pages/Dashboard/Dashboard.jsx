@@ -10,7 +10,7 @@ import { setUser } from '../../redux/slices/authSlice.js';
 export default function Dashboard() {
 
     const { isAuthenticated, user } = useSelector((state) => state.auth);
-console.log(isAuthenticated)
+// console.log(isAuthenticated)
 //     const dispatch = useDispatch();
 
     const { data, isLoading } = useQuery({
