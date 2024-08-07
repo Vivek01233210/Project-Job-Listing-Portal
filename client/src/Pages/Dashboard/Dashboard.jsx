@@ -9,32 +9,33 @@ import { setUser } from '../../redux/slices/authSlice.js';
 
 export default function Dashboard() {
 
-    const { isAuthenticated, user } = useSelector((state) => state.auth);
+    // const { isAuthenticated, user } = useSelector((state) => state.auth);
 // console.log(isAuthenticated)
-//     const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['check-user'],
         queryFn: checkUserAPI,
     })
 
+    // console.log(isLoading)
 //     // console.log(data)
 
-//     useEffect(() => {
-//         if (data) {
-//             dispatch(setUser(data));
-//         }
-//     }, [data])
+    // useEffect(() => {
+    // if (data) {
+    //     dispatch(setUser(data));
+    //   }
+    // }, [data])
 
-    if (isLoading) {
-        return <h1>Loading...</h1>
-    }
+    if(isError) return <Navigate to='/login'/>
 
+    if (isLoading) return <h1>Loading...</h1>
+    
     if (data?.isAuthenticated && data?.user?.role === 'job-seeker') {
         return <JobSeekerDash />
     } else if (data?.isAuthenticated && data?.user.role === 'employer') {
         return <EmployerDash />
     } else {
-        return <Navigate to="/login" />
+        return <Navigate to="/dashboard" />
     }
 }

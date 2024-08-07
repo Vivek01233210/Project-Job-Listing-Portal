@@ -1,5 +1,4 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { checkUserAPI } from '../APIServices/userAPI.js';
 import { useQuery } from '@tanstack/react-query';
 

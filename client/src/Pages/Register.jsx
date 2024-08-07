@@ -2,9 +2,12 @@ import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { registerAPI } from '../APIServices/userAPI.js';
 import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Register() {
+
+    const navigate = useNavigate();
+
     // State variables for form fields
     const [fullName, setFullName] = useState('');
     const [role, setRole] = useState('');
@@ -30,7 +33,7 @@ export default function Register() {
         registerMutation
             .mutateAsync(formData)
             // .then((data) => dispatch(isAuthenticated(data)))
-            // .then(() => navigate("/"))
+            .then(() => navigate("/dashboard"))
             .then(() => toast.success("User registered successfully! 😊"))
             .catch((err) => console.log(err));
         // .catch((err) => toast.error(err?.response?.data?.error));

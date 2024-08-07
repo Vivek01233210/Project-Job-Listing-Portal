@@ -66,7 +66,7 @@ export const login = async (req, res) => {
         isAuthenticated: true,
         user: { id: user._id, role: user.role, fullName: user.fullName, email: user.email }
     });
-};
+};    
 
 // logout route
 export const logout = (req, res) => {
@@ -108,9 +108,6 @@ export const getUserProfile = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-
-    // console.log(req.body);
-
     // console.log(req.user)
     const user = await User.findByIdAndUpdate(req.user._id, req.body,
         { new: true, runValidators: true });

@@ -1,9 +1,30 @@
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { logoutAPI } from "../../APIServices/userAPI.js";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { logout } from "../../redux/slices/authSlice.js";
 
 export default function Navbar() {
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+    const logoutMutation = useMutation({
+        mutationKey: ["logout"],
+        mutationFn: logoutAPI,
+    });
+
+    const handleLogout = () => {
+        logoutMutation
+            .mutateAsync()
+            .then(() => dispatch(logout()))
+            .then(() => toast.success('User logged out successfully!'))
+            .then(() => navigate('/'))
+            .catch((err) => console.log(err));
+    }
 
     return (
         <>
@@ -38,6 +59,9 @@ export default function Navbar() {
                                 <>
                                     <li className="nav-item">
                                         <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/dashboard">Dashboard</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <button className="text-gray-800 hover:text-gray-600" onClick={handleLogout}>logout</button>
                                     </li>
                                 </>
                             )}

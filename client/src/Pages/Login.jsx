@@ -30,8 +30,9 @@ export default function Login() {
         loginMutation
             .mutateAsync(formData)
             .then((data) => dispatch(setUser(data)))
-            .then(() => toast.success("User logged in successfully! 😊"))
+            // .then((data) => console.log(data))
             .then(() => navigate("/dashboard"))
+            .then(() => toast.success("User logged in successfully! 😊"))
             .catch((err) => toast.error(err.response.data.error));
     };
 

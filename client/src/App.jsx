@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from './redux/slices/authSlice.js';
 import Protect from './Pages/ProtectRoute.jsx';
+import Public from './Pages/PublicRoute.jsx';
 
 
 
@@ -37,18 +38,11 @@ function App() {
       path: '/',
       element: <MainLayout />,
       children: [
-        // { index: true, element: <Home /> },
-        // { path: 'login', element: <Login /> },
-        // { path: 'register', element: <Register /> },
-        // { path: 'dashboard', element: <Dashboard />},
         { index: true, element: <Home /> },
-        ...(!isAuthenticated ? [
-          { path: 'login', element: <Login /> },
-          { path: 'register', element: <Register /> },
-        ] : []),
+        { path: 'login', element: <Login />},
+        { path: 'register', element: <Register /> },
         { path: 'dashboard', element: <Dashboard /> },
       ]
-
     },
   ]);
 
