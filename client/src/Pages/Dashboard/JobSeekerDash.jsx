@@ -1,20 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getUserProfileAPI, updateProfileAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
+import { fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
 
 export default function JobSeekerDash() {
 
   const imageInputRef = useRef(null);
 
+  const [resumeBlob, setResumeBlob] = useState(null);
+  const [resumeFilename, setResumeFilename] = useState('');
+
   const { data: user } = useQuery({
     queryKey: ["user-auth"],
     queryFn: getUserProfileAPI,
   });
-  // console.log(user);
+
+
+  const { data: resume } = useQuery({
+    queryKey: ["fetch-resume"],
+    queryFn: fetchResumeAPI,
+  });
+  // console.log(resume)
+
+
+  useEffect(() => {
+    if (resume) {
+      setResumeBlob(resume.data);
+      setResumeFilename(resume.filename);
+    }
+  }, [resume]);
 
   useEffect(() => {
     if (user) {
@@ -64,7 +80,7 @@ export default function JobSeekerDash() {
   });
 
   const updateResume = useMutation({
-    mutationKey: ["checkout"],
+    mutationKey: ["update-resume"],
     mutationFn: updateResumeAPI,
   });
 
@@ -104,6 +120,18 @@ export default function JobSeekerDash() {
       .mutateAsync(formData)
       .then(() => toast.success('Resume uploaded successfully'))
       .catch((error) => console.log(error));
+  };
+
+  const handleDownloadResume = () => {
+    if (resumeBlob) {
+      const url = window.URL.createObjectURL(new Blob([resumeBlob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', resumeFilename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
   };
 
   const handleEditClick = (field) => {
@@ -263,6 +291,9 @@ export default function JobSeekerDash() {
             {/* <p>{profile.resume ? profile.resume.name : 'No resume uploaded'}</p> */}
             {/* {console.log(profile?.resume)} */}
           </div>
+          <button onClick={handleDownloadResume}>
+            Download Resume
+          </button>
         </div>
         <button
           className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'

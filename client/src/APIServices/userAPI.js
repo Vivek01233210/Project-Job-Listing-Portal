@@ -71,3 +71,25 @@ export const updateResumeAPI = async (file) => {
     });
     return response.data;
 };
+
+export const fetchResumeAPI = async () => {
+    const response = await axios.get(`${baseUrl}/user/resume`, {
+        withCredentials: true,
+        responseType: 'blob', // Ensure the response is treated as a binary file
+    });
+    // Extract the filename from the Content-Disposition header
+    const contentDisposition = response.headers['content-disposition'];
+    let filename = 'resume.pdf'; // Default filename
+
+    if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch.length === 2) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    return {
+        data: response.data,
+        filename: filename
+    };
+};

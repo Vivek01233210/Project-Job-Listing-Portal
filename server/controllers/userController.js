@@ -105,7 +105,14 @@ export const getUserProfile = async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
-    return res.status(200).json({ user });
+    // Convert the user document to a plain JavaScript object
+    const userObject = user.toObject();
+
+    // Remove the resume and profilePic fields
+    delete userObject.resume;
+    delete userObject.profilePic;
+
+    return res.status(200).json({ user: userObject });
 }
 
 export const updateProfile = async (req, res) => {
@@ -159,6 +166,7 @@ export const fetchResume = async (req, res) => {
         }
 
         res.set('Content-Type', user.resume.contentType);
+        res.set('Content-Disposition', `attachment; filename="${user.resume.filename}"`);
         res.send(user.resume.data);
     } catch (error) {
         console.error('Error fetching resume:', error);

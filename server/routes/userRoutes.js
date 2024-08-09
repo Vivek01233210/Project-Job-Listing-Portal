@@ -17,6 +17,6 @@ router.get('/profile', protect, getUserProfile);
 router.put('/profile', protect, updateProfile);
 
 router.put('/resume', protect, upload.single('resume'), updateResume);
-router.get('/resume', fetchResume);
+router.get('/resume',protect, fetchResume);
 
 export default router;
