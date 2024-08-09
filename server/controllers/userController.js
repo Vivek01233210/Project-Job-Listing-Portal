@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import fs from 'fs';
 
 // make a register controller
 export const register = async (req, res) => {
@@ -66,7 +67,7 @@ export const login = async (req, res) => {
         isAuthenticated: true,
         user: { id: user._id, role: user.role, fullName: user.fullName, email: user.email }
     });
-};    
+};
 
 // logout route
 export const logout = (req, res) => {
@@ -118,4 +119,49 @@ export const updateProfile = async (req, res) => {
     }
 
     return res.status(200).json({ user });
+}
+
+export const updateResume = async (req, res) => {
+    try {
+        const file = req.file;
+        if (!file) {
+            return res.status(400).json({ message: 'No file uploaded or file size exceeds limit' });
+        }
+        console.log(file);
+        const fileData = file.buffer;
+
+        // Create the file document
+        const fileDocument = {
+            filename: file.originalname,
+            contentType: file.mimetype,
+            data: fileData,
+        }
+
+        const user = await User.findByIdAndUpdate(req.user._id, { resume: fileDocument },
+            { new: true, runValidators: true });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        return res.status(200).json({ user });
+    } catch (error) {
+        console.error('Error uploading resume:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export const fetchResume = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user || !user.resume) {
+            return res.status(404).json({ error: 'Resume not found' });
+        }
+
+        res.set('Content-Type', user.resume.contentType);
+        res.send(user.resume.data);
+    } catch (error) {
+        console.error('Error fetching resume:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 }

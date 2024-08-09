@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema(
             required: true,
             enum: ['employer', 'job-seeker'],
         },
+        profilePic: {
+            type: String,
+            default: "",
+        },
         skills: {
             type: String,
             default: "",
@@ -52,6 +56,11 @@ const UserSchema = new mongoose.Schema(
         linkedIn: {
             type: String,
             default: "",
+        },
+        resume: {
+            filename: { type: String },
+            contentType: { type: String },
+            data: { type: Buffer },
         },
     },
     {

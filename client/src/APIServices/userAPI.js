@@ -60,3 +60,14 @@ export const updateProfileAPI = async (userData) => {
     });
     return response.data;
 };
+
+export const updateResumeAPI = async (file) => {
+    // console.log(file)
+    const response = await axios.put(`${baseUrl}/user/resume`, file, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+};

@@ -4,7 +4,7 @@ import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getUserProfileAPI, updateProfileAPI } from '../../APIServices/userAPI.js';
+import { getUserProfileAPI, updateProfileAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
 
 export default function JobSeekerDash() {
 
@@ -31,7 +31,6 @@ export default function JobSeekerDash() {
         country: user?.user?.country || '',
         mobile: user?.user?.mobile || '',
         linkedIn: user?.user?.linkedIn || '',
-        resume: user?.user?.resume || ''
       }));
     }
   }, [user]);
@@ -48,42 +47,25 @@ export default function JobSeekerDash() {
     email: '',
     mobile: '',
     linkedIn: '',
-    resume: ''
   });
 
-  const [showSaveButton, setShowSaveButton] = useState(false);
-
-  // console.log(profile)
-
   const [isEditing, setIsEditing] = useState({
-    profilePic: false,
     fullName: false,
     headline: false,
     skills: false,
     description: false,
     location: false,
     contact: false,
-    resume: false
   });
-
-  useEffect(() => {
-    setShowSaveButton(true);
-  }, [profile]);
-
-  //   useEffect(() => {
-  //     // Fetch profile data from API
-  //     axios.get('/api/jobseeker/profile')
-  //       .then(response => {
-  //         setProfile(response.data);
-  //       })
-  //       .catch(error => {
-  //         console.error('Error fetching profile data:', error);
-  //       });
-  //   }, []);
 
   const saveMutation = useMutation({
     mutationKey: ["checkout"],
     mutationFn: updateProfileAPI,
+  });
+
+  const updateResume = useMutation({
+    mutationKey: ["checkout"],
+    mutationFn: updateResumeAPI,
   });
 
   const handleSave = async (field) => {
@@ -111,13 +93,17 @@ export default function JobSeekerDash() {
     }
   };
 
-  const handleResumeChange = (event) => {
+  const handleResumeChange = async (event) => {
     const file = event.target.files[0];
-    if (file && (file.type === 'application/pdf' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
-      setProfile({ ...profile, resume: file });
-    } else {
-      toast.error('Invalid file type. Only .pdf and .docx files are allowed.');
-    }
+    // setProfile({ ...profile, resume: file });
+    // console.log(file)
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    updateResume
+      .mutateAsync(formData)
+      .then(() => toast.success('Resume uploaded successfully'))
+      .catch((error) => console.log(error));
   };
 
   const handleEditClick = (field) => {
@@ -129,17 +115,13 @@ export default function JobSeekerDash() {
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            {showSaveButton && 
-            <button onClick={handleSave} >
-              Save
-              </button>}
             {profile.profilePic ? (
               <img src={profile.profilePic} alt="Profile" className="w-24 h-24 rounded-full" />
             ) : (
               <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
             )}
             {/* <img src={profile.profilePic || 'https://via.placeholder.com/150'} alt="Profile" className="w-24 h-24 rounded-full" /> */}
-            <button onClick={() => imageInputRef.current.click()} className="absolute bottom-0 right-0 bg-gray-300 p-1 rounded-full">
+            <button onClick={() => imageInputRef.current.click()} className="absolute bottom-1 right-1 bg-gray-300 p-1 rounded-full">
               <HiPencil />
             </button>
             <div className="mt-2">
@@ -151,18 +133,17 @@ export default function JobSeekerDash() {
                 accept=".jpg,.jpeg,.png"
                 onChange={handleImageFileChange}
               />
-              {/* <button onClick={() => handleSave('profilePic')} className="bg-blue-500 text-white px-2 py-1 rounded">Save</button> */}
             </div>
 
           </div>
           <div className="ml-4">
             <h2 className="text-2xl font-bold">
               {isEditing.fullName ? (
-                <input type="text" name="fullName" value={profile.fullName} onChange={handleInputChange} className="border p-1" />
+                <input type="text" name="fullName" value={profile.fullName} onChange={handleInputChange} className="border p-1 w-40" />
               ) : (
                 profile.fullName
               )}
-              <button onClick={() => handleEditClick('fullName')} className="ml-2 bg-gray-300 p-1 rounded-full">
+              <button onClick={() => handleEditClick('fullName')} className="ml-2 hover:bg-gray-300 text-base p-1 rounded-full">
                 <HiPencil />
               </button>
             </h2>
@@ -172,7 +153,7 @@ export default function JobSeekerDash() {
               ) : (
                 profile.headline
               )}
-              <button onClick={() => handleEditClick('headline')} className="ml-2 bg-gray-300 p-1 rounded-full">
+              <button onClick={() => handleEditClick('headline')} className="ml-2 text-black hover:bg-gray-300 text-sm p-1 rounded-full">
                 <HiPencil />
               </button>
             </p>
@@ -181,53 +162,56 @@ export default function JobSeekerDash() {
 
         <div className="mb-6">
           <h3 className="text-xl font-bold mb-2">About</h3>
+
           <div>
-            <label className="block text-gray-700">Skills</label>
+            <label className="text-gray-700 mr-2">Skills</label>
+            <button onClick={() => handleEditClick('skills')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
+              <HiPencil />
+            </button>
             {isEditing.skills ? (
               <input type="text" name="skills" value={profile.skills} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.skills}</p>
             )}
-            <button onClick={() => handleEditClick('skills')} className="bg-gray-300 p-1 rounded-full">
+          </div>
+
+          <div className="mt-4">
+            <label className="text-gray-700 mr-2">Description</label>
+            <button onClick={() => handleEditClick('description')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
               <HiPencil />
             </button>
-          </div>
-          <div className="mt-4">
-            <label className="block text-gray-700">Description</label>
             {isEditing.description ? (
               <textarea name="description" value={profile.description} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.description}</p>
             )}
-            <button onClick={() => handleEditClick('description')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
           </div>
+
         </div>
 
         <div className="mb-6">
-          <h3 className="text-xl font-bold mb-2">Location</h3>
+          <h3 className="inline text-xl font-bold mb-2 mr-2">Location</h3>
+          <button onClick={() => handleEditClick('location')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
+            <HiPencil />
+          </button>
           <div>
-            <label className="block text-gray-700">City</label>
+            <label className="text-gray-700 mr-2">City</label>
             {isEditing.location ? (
               <input type="text" name="city" value={profile.city} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.city}</p>
             )}
-            <button onClick={() => handleEditClick('location')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
           <div className="mt-4">
             <label className="block text-gray-700">State</label>
+
             {isEditing.location ? (
               <input type="text" name="state" value={profile.state} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.state}</p>
             )}
-            <button onClick={() => handleEditClick('location')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
           <div className="mt-4">
             <label className="block text-gray-700">Country</label>
@@ -236,14 +220,15 @@ export default function JobSeekerDash() {
             ) : (
               <p>{profile.country}</p>
             )}
-            <button onClick={() => handleEditClick('location')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
         </div>
 
         <div className="mb-6">
-          <h3 className="text-xl font-bold mb-2">Contact</h3>
+          <h3 className="inline mr-2 text-xl font-bold mb-2">Contact</h3>
+          <button onClick={() => handleEditClick('contact')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
+            <HiPencil />
+          </button>
           <div>
             <label className="block text-gray-700">Email Id:</label>
             {isEditing.contact ? (
@@ -251,9 +236,6 @@ export default function JobSeekerDash() {
             ) : (
               <p>{profile.email}</p>
             )}
-            <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
           </div>
           <div className="mt-4">
             <label className="block text-gray-700">Mobile No:</label>
@@ -262,9 +244,6 @@ export default function JobSeekerDash() {
             ) : (
               <p>{profile.mobile}</p>
             )}
-            <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
           </div>
           <div className="mt-4">
             <label className="block text-gray-700">LinkedIn URL:</label>
@@ -273,25 +252,24 @@ export default function JobSeekerDash() {
             ) : (
               <p>{profile.linkedIn}</p>
             )}
-            <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
           </div>
         </div>
 
+        {/* RESUME UPLOAD HERE */}
         <div className="mb-6">
           <h3 className="text-xl font-bold mb-2">Upload Resume</h3>
           <div>
-            {isEditing.resume ? (
-              <input type="file" name="resume" accept=".pdf,.docx" onChange={handleResumeChange} className="border p-1 w-full" />
-            ) : (
-              <p>{profile.resume ? profile.resume.name : 'No resume uploaded'}</p>
-            )}
-            <button onClick={() => handleEditClick('resume')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+            <input type="file" name="resume" accept=".pdf" onChange={handleResumeChange} className="border p-1 w-full" />
+            {/* <p>{profile.resume ? profile.resume.name : 'No resume uploaded'}</p> */}
+            {/* {console.log(profile?.resume)} */}
           </div>
         </div>
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+          onClick={handleSave}
+        >
+          Save Changes
+        </button>
       </div>
     </div>
   );
