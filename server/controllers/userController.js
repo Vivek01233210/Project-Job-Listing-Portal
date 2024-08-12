@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import fs from 'fs';
 
 // make a register controller
 export const register = async (req, res) => {

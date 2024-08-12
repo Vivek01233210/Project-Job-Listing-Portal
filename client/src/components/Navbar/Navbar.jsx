@@ -55,6 +55,13 @@ export default function Navbar() {
                                     </li>
                                 </>
                             )}
+                            {isAuthenticated && user.role === 'employer' && (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/post-job">Post Job</Link>
+                                    </li>
+                                </>
+                            )}
                             {isAuthenticated && (
                                 <>
                                     <li className="nav-item">

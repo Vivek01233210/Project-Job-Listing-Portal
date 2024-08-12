@@ -1,73 +1,137 @@
-import React, { useState, useRef } from 'react';
-import axios from 'axios';
+import React, { useState, useRef, useEffect } from 'react';
 import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
+import { fetchProfileImageAPI, getUserProfileAPI, updateProfileAPI, updateProfileImageAPI } from '../../APIServices/userAPI.js';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { Buffer } from 'buffer';
 
 export default function EmployerDash() {
 
   const imageInputRef = useRef(null);
+  const QueryClient = useQueryClient();
+
+  const [imageSrc, setImageSrc] = useState('');
+
+  const { data: profilePic } = useQuery({
+    queryKey: ["fetch-profile-pic"],
+    queryFn: fetchProfileImageAPI,
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ["user-auth"],
+    queryFn: getUserProfileAPI,
+  });
+
+  console.log(user)
+  const updateProfile = useMutation({
+    mutationKey: ["update-profile"],
+    mutationFn: updateProfileAPI,
+  });
+
+  const handleSave = async (field) => {
+    updateProfile
+      .mutateAsync(profile)
+      .then(() => toast.success('Profile updated successfully'))
+    setIsEditing({ ...isEditing, [field]: false });
+  };
+
+  useEffect(() => {
+    if (profilePic && profilePic.data) {
+      const buffer = profilePic.data;
+      const base64String = Buffer.from(buffer).toString('base64');
+      const dataUrl = `data:image/jpeg;base64,${base64String}`;
+      setImageSrc(dataUrl);
+    }
+  }, [profilePic, user]);
+
+  useEffect(() => {
+    if (user) {
+      setProfile(prevProfile => ({
+        ...prevProfile,
+        fullName: user?.user?.fullName || '',
+        email: user?.user?.email || '',
+        headline: user?.user?.headline || '',
+        description: user?.user?.description || '',
+        city: user?.user?.city || '',
+        state: user?.user?.state || '',
+        country: user?.user?.country || '',
+        mobile: user?.user?.mobile || '',
+        linkedIn: user?.user?.linkedIn || '',
+      }));
+    }
+  }, [user]);
 
   const [profile, setProfile] = useState({
-    profilePic: '',
-    companyName: 'Tech Solutions Inc.',
-    designation: '',
-    description: '',
+    fullName: '',
     email: '',
+    headline: '',
+    description: '',
+    city: '',
+    state: '',
+    country: '',
     mobile: '',
-    linkedin: ''
+    linkedIn: '',
   });
 
   const [isEditing, setIsEditing] = useState({
     profilePic: false,
-    companyName: false,
-    designation: false,
+    fullName: false,
+    headline: false,
     description: false,
     contact: false
   });
+
+  const updateProfilePic = useMutation({
+    mutationKey: ["update-profile-pic"],
+    mutationFn: updateProfileImageAPI,
+  });
+
+  const handleProfilePicChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 1 * 1024 * 1024) {
+        toast.error('File size cannot exceed 1 MB!');
+        return;
+      }
+    }
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg')) {
+      // console.log(file)
+      const formData = new FormData();
+      formData.append('profilePic', file);
+
+      updateProfilePic
+        .mutateAsync(formData)
+        .then((data) => toast.success(data.msg))
+        .then(() => QueryClient.invalidateQueries('fetch-profile-pic'))
+        .catch((error) => console.log(error));
+    } else {
+      toast.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
+    }
+  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleImageFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile({ ...profile, profilePic: reader.result });
-      };
-      reader.readAsDataURL(file);
-    } else {
-      console.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
-    }
-  };
-
   const handleEditClick = (field) => {
     setIsEditing({ ...isEditing, [field]: !isEditing[field] });
   };
 
-  const handleSave = (field) => {
-    axios.post(`/api/employer/profile/${field}`, { [field]: profile[field] })
-      .then(response => {
-        setIsEditing({ ...isEditing, [field]: false });
-      })
-      .catch(error => {
-        console.error('Error saving profile data:', error);
-      });
-  };
-
+  
   return (
     <div className="container mx-auto p-6 min-h-screen max-w-lg lg:max-w-2xl">
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            {profile.profilePic ? (
-              <img src={profile.profilePic} alt="Profile" className="w-24 h-24 rounded-full" />
+            {imageSrc ? (
+              <img src={imageSrc} alt="Profile" className="w-24 h-24 rounded-full" />
             ) : (
               <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
             )}
-            <button onClick={() => imageInputRef.current.click()} className="absolute bottom-0 right-0 bg-gray-300 p-1 rounded-full">
+            <button onClick={() => imageInputRef.current.click()} className="absolute bottom-1 right-1 bg-gray-300 p-1 rounded-full">
               <HiPencil />
             </button>
             <div className="mt-2">
@@ -77,28 +141,28 @@ export default function EmployerDash() {
                 className='hidden'
                 name="profilePic"
                 accept=".jpg,.jpeg,.png"
-                onChange={handleImageFileChange}
+                onChange={handleProfilePicChange}
               />
             </div>
           </div>
           <div className="ml-4">
             <h2 className="text-2xl font-bold">
-              {isEditing.companyName ? (
-                <input type="text" name="companyName" value={profile.companyName} onChange={handleInputChange} className="border p-1" />
+              {isEditing.fullName ? (
+                <input type="text" name="fullName" value={profile.fullName} onChange={handleInputChange} className="border p-1 w-44" />
               ) : (
-                profile.companyName
+                profile.fullName
               )}
-              <button onClick={() => handleEditClick('companyName')} className="ml-2 bg-gray-300 p-1 rounded-full">
+              <button onClick={() => handleEditClick('fullName')} className="ml-2 hover:bg-gray-300 p-1 rounded-full">
                 <HiPencil />
               </button>
             </h2>
             <p className="text-gray-600">
-              {isEditing.designation ? (
-                <input type="text" name="designation" value={profile.designation} onChange={handleInputChange} className="border p-1" />
+              {isEditing.headline ? (
+                <input type="text" name="headline" value={profile.headline} onChange={handleInputChange} className="border p-1" />
               ) : (
-                profile.designation
+                profile.headline
               )}
-              <button onClick={() => handleEditClick('designation')} className="ml-2 bg-gray-300 p-1 rounded-full">
+              <button onClick={() => handleEditClick('headline')} className="ml-2 hover:bg-gray-300 p-1 rounded-full">
                 <HiPencil />
               </button>
             </p>
@@ -106,22 +170,30 @@ export default function EmployerDash() {
         </div>
 
         <div className="mb-6">
-          <h3 className="text-xl font-bold mb-2">About</h3>
+          <div className='flex items-center gap-2'>
+            <h3 className="text-xl font-bold">About</h3>
+            <button onClick={() => handleEditClick('description')} className="hover:bg-gray-300 p-1 rounded-full">
+              <HiPencil />
+            </button>
+          </div>
           <div>
-            <label className="block text-gray-700">Description</label>
+            <label className="block text-gray-700">Description:</label>
             {isEditing.description ? (
               <textarea name="description" value={profile.description} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
               <p>{profile.description}</p>
             )}
-            <button onClick={() => handleEditClick('description')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
         </div>
 
         <div className="mb-6">
-          <h3 className="text-xl font-bold mb-2">Contact</h3>
+          <div className='flex items-center gap-2'>
+            <h3 className="text-xl font-bold">Contact</h3>
+            <button onClick={() => handleEditClick('contact')} className="hover:bg-gray-300 p-1 rounded-full">
+              <HiPencil />
+            </button>
+          </div>
           <div>
             <label className="block text-gray-700">Email Id:</label>
             {isEditing.contact ? (
@@ -129,9 +201,7 @@ export default function EmployerDash() {
             ) : (
               <p>{profile.email}</p>
             )}
-            <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
           <div className="mt-4">
             <label className="block text-gray-700">Mobile No:</label>
@@ -140,22 +210,60 @@ export default function EmployerDash() {
             ) : (
               <p>{profile.mobile}</p>
             )}
-            <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
           <div className="mt-4">
             <label className="block text-gray-700">LinkedIn URL:</label>
             {isEditing.contact ? (
-              <input type="url" name="linkedin" value={profile.linkedin} onChange={handleInputChange} className="border p-1 w-full" />
+              <input type="url" name="linkedIn" value={profile.linkedIn} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
-              <p>{profile.linkedin}</p>
+              <p>{profile.linkedIn}</p>
             )}
-            <button onClick={() => handleEditClick('contact')} className="bg-gray-300 p-1 rounded-full">
-              <HiPencil />
-            </button>
+
           </div>
         </div>
+
+        <div className="mb-6">
+          <h3 className="inline text-xl font-bold mb-2 mr-2">Location:</h3>
+          <button onClick={() => handleEditClick('location')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
+            <HiPencil />
+          </button>
+          <div>
+            <label className="text-gray-700 mr-2">City</label>
+            {isEditing.location ? (
+              <input type="text" name="city" value={profile.city} onChange={handleInputChange} className="border p-1 w-full" />
+            ) : (
+              <p>{profile.city}</p>
+            )}
+
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">State:</label>
+
+            {isEditing.location ? (
+              <input type="text" name="state" value={profile.state} onChange={handleInputChange} className="border p-1 w-full" />
+            ) : (
+              <p>{profile.state}</p>
+            )}
+
+          </div>
+          <div className="mt-4">
+            <label className="block text-gray-700">Country:</label>
+            {isEditing.location ? (
+              <input type="text" name="country" value={profile.country} onChange={handleInputChange} className="border p-1 w-full" />
+            ) : (
+              <p>{profile.country}</p>
+            )}
+
+          </div>
+        </div>
+
+        <button
+          className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+          onClick={handleSave}
+        >
+          Save Changes
+        </button>
       </div>
     </div>
   );

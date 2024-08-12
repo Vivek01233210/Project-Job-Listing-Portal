@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from './redux/slices/authSlice.js';
 import Protect from './Pages/ProtectRoute.jsx';
 import Public from './Pages/PublicRoute.jsx';
+import PostJob from './Pages/PostJob.jsx';
 
 
 
@@ -31,7 +32,7 @@ function App() {
     if (data) {
       dispatch(setUser(data));
     }
-  }, [data])
+  }, [data]);
 
   const router = createBrowserRouter([
     {
@@ -42,6 +43,7 @@ function App() {
         { path: 'login', element: <Login />},
         { path: 'register', element: <Register /> },
         { path: 'dashboard', element: <Dashboard /> },
+        { path: 'post-job', element: <PostJob /> },
       ]
     },
   ]);

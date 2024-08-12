@@ -81,8 +81,8 @@ export default function JobSeekerDash() {
     contact: false,
   });
 
-  const saveMutation = useMutation({
-    mutationKey: ["checkout"],
+  const updateProfile = useMutation({
+    mutationKey: ["update-profile"],
     mutationFn: updateProfileAPI,
   });
 
@@ -97,7 +97,7 @@ export default function JobSeekerDash() {
   });
 
   const handleSave = async (field) => {
-    saveMutation
+    updateProfile
       .mutateAsync(profile)
       .then(() => toast.success('Profile updated successfully'))
     setIsEditing({ ...isEditing, [field]: false });

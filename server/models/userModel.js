@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
+        companyName: {
+            type: String,
+            default: "",
+        },
         headline: {
             type: String,
             default: "",

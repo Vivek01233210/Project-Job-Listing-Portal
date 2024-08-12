@@ -8,6 +8,7 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 
 import userRouter from './routes/userRoutes.js';
+import jobRouter from './routes/jobRoutes.js';
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/job", jobRouter);
 
 // NOT FOUND MIDDLEWARE
 app.use('*', (req, res) => {
