@@ -2,35 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
+import { FaDownload } from "react-icons/fa";
 
 export default function JobSeekerDash() {
 
   const imageInputRef = useRef(null);
-
-  const [resumeBlob, setResumeBlob] = useState(null);
-  const [resumeFilename, setResumeFilename] = useState('');
+  const resumeInputRef = useRef(null);
+  const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
     queryKey: ["user-auth"],
     queryFn: getUserProfileAPI,
   });
 
-
-  const { data: resume } = useQuery({
+  const { data: resumeData } = useQuery({
     queryKey: ["fetch-resume"],
     queryFn: fetchResumeAPI,
   });
-  // console.log(resume)
-
-
-  useEffect(() => {
-    if (resume) {
-      setResumeBlob(resume.data);
-      setResumeFilename(resume.filename);
-    }
-  }, [resume]);
 
   useEffect(() => {
     if (user) {
@@ -111,27 +101,28 @@ export default function JobSeekerDash() {
 
   const handleResumeChange = async (event) => {
     const file = event.target.files[0];
-    // setProfile({ ...profile, resume: file });
-    // console.log(file)
     const formData = new FormData();
     formData.append('resume', file);
 
     updateResume
       .mutateAsync(formData)
-      .then(() => toast.success('Resume uploaded successfully'))
+      .then((data) => toast.success(data.msg))
+      .then(() => queryClient.invalidateQueries('fetch-resume'))
       .catch((error) => console.log(error));
   };
 
   const handleDownloadResume = () => {
-    if (resumeBlob) {
-      const url = window.URL.createObjectURL(new Blob([resumeBlob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', resumeFilename);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
+    const blob = new Blob([new Uint8Array(resumeData?.data.data)], { type: resumeData?.contentType });
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a link and trigger download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = resumeData?.filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   };
 
   const handleEditClick = (field) => {
@@ -286,14 +277,24 @@ export default function JobSeekerDash() {
         {/* RESUME UPLOAD HERE */}
         <div className="mb-6">
           <h3 className="text-xl font-bold mb-2">Upload Resume</h3>
-          <div>
-            <input type="file" name="resume" accept=".pdf" onChange={handleResumeChange} className="border p-1 w-full" />
-            {/* <p>{profile.resume ? profile.resume.name : 'No resume uploaded'}</p> */}
-            {/* {console.log(profile?.resume)} */}
+          <div className='flex gap-4 items-center'>
+            {
+              resumeData?.data &&
+              <button onClick={handleDownloadResume}
+                className='flex items-center gap-2 bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+              >
+                {resumeData?.filename} <FaDownload />
+              </button>
+            }
+            <div className='my-2'>
+              <input type="file" ref={resumeInputRef} name="resume" accept=".pdf" onChange={handleResumeChange} className="hidden" />
+              <button className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+                onClick={() => resumeInputRef.current.click()}
+              >
+                {resumeData?.data ? 'Update Resume' : 'Upload Resume'}
+              </button>
+            </div>
           </div>
-          <button onClick={handleDownloadResume}>
-            Download Resume
-          </button>
         </div>
         <button
           className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'

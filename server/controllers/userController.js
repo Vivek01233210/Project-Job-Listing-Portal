@@ -134,7 +134,7 @@ export const updateResume = async (req, res) => {
         if (!file) {
             return res.status(400).json({ message: 'No file uploaded or file size exceeds limit' });
         }
-        console.log(file);
+        // console.log(file);
         const fileData = file.buffer;
 
         // Create the file document
@@ -151,7 +151,7 @@ export const updateResume = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        return res.status(200).json({ user });
+        return res.status(200).json({ msg: 'Resume uploaded successfully' });
     } catch (error) {
         console.error('Error uploading resume:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -161,13 +161,13 @@ export const updateResume = async (req, res) => {
 export const fetchResume = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
-        if (!user || !user.resume) {
-            return res.status(404).json({ error: 'Resume not found' });
+        if (!user || !user.resume || !user.resume.data) {
+            return res.status(200).json({ data: null });
         }
 
         res.set('Content-Type', user.resume.contentType);
-        res.set('Content-Disposition', `attachment; filename="${user.resume.filename}"`);
-        res.send(user.resume.data);
+
+        res.status(200).json(user.resume);
     } catch (error) {
         console.error('Error fetching resume:', error);
         res.status(500).json({ message: 'Internal server error' });

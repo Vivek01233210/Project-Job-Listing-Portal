@@ -60,7 +60,7 @@ const UserSchema = new mongoose.Schema(
         resume: {
             filename: { type: String },
             contentType: { type: String },
-            data: { type: Buffer },
+            data: { type: Buffer, default: null },
         },
     },
     {
