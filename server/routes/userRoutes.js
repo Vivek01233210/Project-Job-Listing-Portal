@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkUser, fetchResume, getUserProfile, login, logout, register, updateProfile, updateResume } from '../controllers/userController.js';
+import { checkUser, fetchResume, getUserProfile, login, logout, register, updateProfile, updateProfilePic, updateResume } from '../controllers/userController.js';
 import { protect } from '../middlewares/protect.js';
 import multer from 'multer';
 
@@ -14,9 +14,10 @@ router.post('/login', login);
 router.post('/logout', logout);
 router.get('/check-user', checkUser);
 router.get('/profile', protect, getUserProfile);
-router.put('/profile', protect, updateProfile);
-
-router.put('/resume', protect, upload.single('resume'), updateResume);
 router.get('/resume',protect, fetchResume);
+
+router.put('/profile', protect, updateProfile);
+router.put('/resume', protect, upload.single('resume'), updateResume);
+router.put('/profile-pic', protect, upload.single('profilePic'), updateProfilePic);
 
 export default router;

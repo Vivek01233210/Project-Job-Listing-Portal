@@ -21,9 +21,8 @@ const UserSchema = new mongoose.Schema(
             required: true,
             enum: ['employer', 'job-seeker'],
         },
-        profilePic: {
-            type: String,
-            default: "",
+        profilePic:{
+            data: { type: Buffer, default: null },
         },
         skills: {
             type: String,

@@ -132,7 +132,7 @@ export const updateResume = async (req, res) => {
     try {
         const file = req.file;
         if (!file) {
-            return res.status(400).json({ message: 'No file uploaded or file size exceeds limit' });
+            return res.status(400).json({ msg: 'No file uploaded or file size exceeds limit' });
         }
         // console.log(file);
         const fileData = file.buffer;
@@ -170,6 +170,33 @@ export const fetchResume = async (req, res) => {
         res.status(200).json(user.resume);
     } catch (error) {
         console.error('Error fetching resume:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export const updateProfilePic = async (req, res) => {
+    try {
+        const file = req.file;
+        console.log(file)
+        if (!file) {
+            return res.status(400).json({ msg: 'No file uploaded or file size exceeds limit' });
+        }
+        // console.log(file);
+        
+        const fileDocument = {
+            data: file.buffer,
+        }
+
+        const user = await User.findByIdAndUpdate(req.user._id, { profilePic: fileDocument },
+            { new: true, runValidators: true });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        return res.status(200).json({ msg: 'Profile Image changed Successfully!' });
+    } catch (error) {
+        console.error('Error uploading resume:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }

@@ -3,7 +3,7 @@ import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
+import { fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateProfileImageAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
 import { FaDownload } from "react-icons/fa";
 
 export default function JobSeekerDash() {
@@ -42,7 +42,6 @@ export default function JobSeekerDash() {
   }, [user]);
 
   const [profile, setProfile] = useState({
-    profilePic: '',
     fullName: '',
     headline: '',
     skills: '',
@@ -74,6 +73,11 @@ export default function JobSeekerDash() {
     mutationFn: updateResumeAPI,
   });
 
+  const updateProfilePic = useMutation({
+    mutationKey: ["update-profile-pic"],
+    mutationFn: updateProfileImageAPI,
+  });
+
   const handleSave = async (field) => {
     saveMutation
       .mutateAsync(profile)
@@ -86,14 +90,22 @@ export default function JobSeekerDash() {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleImageFileChange = (event) => {
+  const handleProfilePicChange = (event) => {
     const file = event.target.files[0];
     if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfile({ ...profile, profilePic: reader.result });
-      };
-      reader.readAsDataURL(file);
+      console.log(file)
+      const formData = new FormData();
+      formData.append('profilePic', file);
+
+      updateProfilePic
+        .mutateAsync(formData)
+        .then((data) => toast.success(data.msg))
+        .catch((error) => console.log(error));
+      // const reader = new FileReader();
+      // reader.onloadend = () => {
+      //   // setProfile({ ...profile, profilePic: reader.result });
+      // };
+      // reader.readAsDataURL(file);
     } else {
       toast.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
     }
@@ -139,7 +151,6 @@ export default function JobSeekerDash() {
             ) : (
               <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
             )}
-            {/* <img src={profile.profilePic || 'https://via.placeholder.com/150'} alt="Profile" className="w-24 h-24 rounded-full" /> */}
             <button onClick={() => imageInputRef.current.click()} className="absolute bottom-1 right-1 bg-gray-300 p-1 rounded-full">
               <HiPencil />
             </button>
@@ -148,9 +159,8 @@ export default function JobSeekerDash() {
                 type="file"
                 ref={imageInputRef}
                 className='hidden'
-                name="profilePic"
                 accept=".jpg,.jpeg,.png"
-                onChange={handleImageFileChange}
+                onChange={handleProfilePicChange}
               />
             </div>
 

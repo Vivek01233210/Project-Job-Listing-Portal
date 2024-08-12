@@ -62,7 +62,6 @@ export const updateProfileAPI = async (userData) => {
 };
 
 export const updateResumeAPI = async (file) => {
-    // console.log(file)
     const response = await axios.put(`${baseUrl}/user/resume`, file, {
         withCredentials: true,
         headers: {
@@ -75,8 +74,18 @@ export const updateResumeAPI = async (file) => {
 export const fetchResumeAPI = async () => {
     const response = await axios.get(`${baseUrl}/user/resume`, {
         withCredentials: true,
-        // responseType: 'blob', // Ensure the response is treated as a binary file
     });
 
+    return response.data;
+};
+
+export const updateProfileImageAPI = async (file) => {
+    console.log(file)
+    const response = await axios.put(`${baseUrl}/user/profile-pic`, file, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
     return response.data;
 };
