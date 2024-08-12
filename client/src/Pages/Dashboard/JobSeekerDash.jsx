@@ -3,14 +3,17 @@ import { CiUser } from "react-icons/ci";
 import { HiPencil } from "react-icons/hi2";
 import { toast } from 'react-toastify';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateProfileImageAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
+import { fetchProfileImageAPI, fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateProfileImageAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
 import { FaDownload } from "react-icons/fa";
+import { Buffer } from 'buffer';
 
 export default function JobSeekerDash() {
 
   const imageInputRef = useRef(null);
   const resumeInputRef = useRef(null);
   const queryClient = useQueryClient();
+
+  const [imageSrc, setImageSrc] = useState('');
 
   const { data: user } = useQuery({
     queryKey: ["user-auth"],
@@ -22,13 +25,28 @@ export default function JobSeekerDash() {
     queryFn: fetchResumeAPI,
   });
 
+  const { data: profilePic } = useQuery({
+    queryKey: ["fetch-profile-pic"],
+    queryFn: fetchProfileImageAPI,
+  });
+
+  // console.log(profilePic)
+
+  useEffect(() => {
+    if (profilePic && profilePic.data) {
+      const buffer = profilePic.data;
+      const base64String = Buffer.from(buffer).toString('base64');
+      const dataUrl = `data:image/jpeg;base64,${base64String}`;
+      setImageSrc(dataUrl);
+    }
+  }, [profilePic, user]);
+
   useEffect(() => {
     if (user) {
       setProfile(prevProfile => ({
         ...prevProfile,
         fullName: user?.user?.fullName || '',
         email: user?.user?.email || '',
-        profilePic: user?.user?.profilePic || '',
         headline: user?.user?.headline || '',
         skills: user?.user?.skills || '',
         description: user?.user?.description || '',
@@ -92,20 +110,22 @@ export default function JobSeekerDash() {
 
   const handleProfilePicChange = (event) => {
     const file = event.target.files[0];
-    if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
-      console.log(file)
+    if (file) {
+      if (file.size >  1 * 1024 * 1024) {
+        toast.error('File size cannot exceed 1 MB!');
+        return;
+      }
+    }
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg')) {
+      // console.log(file)
       const formData = new FormData();
       formData.append('profilePic', file);
 
       updateProfilePic
         .mutateAsync(formData)
         .then((data) => toast.success(data.msg))
+        .then(() => queryClient.invalidateQueries('fetch-profile-pic'))
         .catch((error) => console.log(error));
-      // const reader = new FileReader();
-      // reader.onloadend = () => {
-      //   // setProfile({ ...profile, profilePic: reader.result });
-      // };
-      // reader.readAsDataURL(file);
     } else {
       toast.error('Invalid file type. Only .jpg, .jpeg, and .png files are allowed.');
     }
@@ -113,6 +133,12 @@ export default function JobSeekerDash() {
 
   const handleResumeChange = async (event) => {
     const file = event.target.files[0];
+    if (file) {
+      if (file.size >  1 * 1024 * 1024) {
+        toast.error('File size cannot exceed 1 MB');
+        return;
+      }
+    }
     const formData = new FormData();
     formData.append('resume', file);
 
@@ -146,8 +172,8 @@ export default function JobSeekerDash() {
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            {profile.profilePic ? (
-              <img src={profile.profilePic} alt="Profile" className="w-24 h-24 rounded-full" />
+            {imageSrc ? (
+              <img src={imageSrc} alt="Profile" className="w-24 h-24 shadow-md rounded-full" />
             ) : (
               <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
             )}

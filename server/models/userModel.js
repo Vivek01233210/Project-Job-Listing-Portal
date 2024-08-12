@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema(
         },
         profilePic:{
             data: { type: Buffer, default: null },
+            contentType: { type: String },
         },
         skills: {
             type: String,

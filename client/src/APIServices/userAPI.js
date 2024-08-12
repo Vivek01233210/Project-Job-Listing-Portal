@@ -80,12 +80,20 @@ export const fetchResumeAPI = async () => {
 };
 
 export const updateProfileImageAPI = async (file) => {
-    console.log(file)
+    // console.log(file)
     const response = await axios.put(`${baseUrl}/user/profile-pic`, file, {
         withCredentials: true,
         headers: {
             'Content-Type': 'multipart/form-data'
         }
     });
+    return response.data;
+};
+
+export const fetchProfileImageAPI = async () => {
+    const response = await axios.get(`${baseUrl}/user/profile-pic`, {
+        withCredentials: true,
+    });
+
     return response.data;
 };

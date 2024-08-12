@@ -116,16 +116,19 @@ export const getUserProfile = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-    // console.log(req.user)
-    const user = await User.findByIdAndUpdate(req.user._id, req.body,
-        { new: true, runValidators: true });
-
-    // console.log(user);
-    if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+    try {
+        const user = await User.findByIdAndUpdate(req.user._id, req.body,
+            { new: true, runValidators: true });
+    
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+    
+        return res.status(200).json({ user });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-
-    return res.status(200).json({ user });
 }
 
 export const updateResume = async (req, res) => {
@@ -177,7 +180,7 @@ export const fetchResume = async (req, res) => {
 export const updateProfilePic = async (req, res) => {
     try {
         const file = req.file;
-        console.log(file)
+        // console.log(file)
         if (!file) {
             return res.status(400).json({ msg: 'No file uploaded or file size exceeds limit' });
         }
@@ -185,6 +188,7 @@ export const updateProfilePic = async (req, res) => {
         
         const fileDocument = {
             data: file.buffer,
+            contentType: file.mimetype
         }
 
         const user = await User.findByIdAndUpdate(req.user._id, { profilePic: fileDocument },
@@ -197,6 +201,23 @@ export const updateProfilePic = async (req, res) => {
         return res.status(200).json({ msg: 'Profile Image changed Successfully!' });
     } catch (error) {
         console.error('Error uploading resume:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export const fetchProfilePic = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user || !user.profilePic || !user.profilePic.data) {
+            return res.status(200).json({ data: null });
+        }
+
+        res.set('Content-Type', user.profilePic.contentType);
+
+        res.status(200).json(user.profilePic);
+    }
+    catch (error) {
+        console.error('Error fetching profile pic:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
