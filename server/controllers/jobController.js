@@ -11,3 +11,13 @@ export const createJob = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+export const getAllJobs = async (req, res) => { 
+    try {
+        const jobs = await Job.find({});
+        res.status(200).json({data:jobs});
+    } catch (error) {
+        console.error('Error getting jobs:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

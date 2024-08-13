@@ -12,6 +12,7 @@ import { setUser } from './redux/slices/authSlice.js';
 import Protect from './Pages/ProtectRoute.jsx';
 import Public from './Pages/PublicRoute.jsx';
 import PostJob from './Pages/PostJob.jsx';
+import JobList from './Pages/JobList.jsx';
 
 
 
@@ -44,6 +45,7 @@ function App() {
         { path: 'register', element: <Register /> },
         { path: 'dashboard', element: <Dashboard /> },
         { path: 'post-job', element: <PostJob /> },
+        { path: 'jobs', element: <JobList /> },
       ]
     },
   ]);

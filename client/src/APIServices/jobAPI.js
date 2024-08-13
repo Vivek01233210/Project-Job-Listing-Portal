@@ -11,3 +11,13 @@ export const createJobAPI = async (jobData) => {
 
     return response.data;
 };
+
+export const getAllJobsAPI = async () => {
+    const response = await axios.get(`${baseUrl}`,
+        {
+            withCredentials: true
+        }
+    );
+
+    return response.data;
+};
