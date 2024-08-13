@@ -23,18 +23,11 @@ export default function EmployerDash() {
     queryFn: getUserProfileAPI,
   });
 
-  console.log(user)
+  // console.log(user)
   const updateProfile = useMutation({
     mutationKey: ["update-profile"],
     mutationFn: updateProfileAPI,
   });
-
-  const handleSave = async (field) => {
-    updateProfile
-      .mutateAsync(profile)
-      .then(() => toast.success('Profile updated successfully'))
-    setIsEditing({ ...isEditing, [field]: false });
-  };
 
   useEffect(() => {
     if (profilePic && profilePic.data) {
@@ -120,6 +113,23 @@ export default function EmployerDash() {
     setIsEditing({ ...isEditing, [field]: !isEditing[field] });
   };
 
+  const setAllEditingFieldsToFalse = () => {
+    const updatedEditingState = Object.keys(isEditing).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {});
+
+    setIsEditing(updatedEditingState);
+  };
+
+  const handleSave = async () => {
+    updateProfile
+      .mutateAsync(profile)
+      .then(() => setAllEditingFieldsToFalse())
+      .then(() => toast.success('Profile updated successfully'))
+      .catch((error) => console.log(error));
+
+  };
   
   return (
     <div className="container mx-auto p-6 min-h-screen max-w-lg lg:max-w-2xl">

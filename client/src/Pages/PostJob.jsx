@@ -10,7 +10,8 @@ export default function PostJob() {
         qualifications: '',
         responsibility: '',
         location: '',
-        salaryRange: ''
+        salaryRange: '',
+        companyName: ''
     });
 
     const createJobMutation = useMutation({
@@ -30,10 +31,9 @@ export default function PostJob() {
         e.preventDefault();
         createJobMutation
             .mutateAsync(jobData)
-            .then(() => {toast.success('Job posted successfully')})
-            .catch((error) => {console.log(error)});
-        // Handle form submission logic here
-        console.log('Form data submitted:', jobData);
+            .then(() => { toast.success('Job posted successfully') })
+            .catch((error) => { console.log(error) });
+        // console.log('Form data submitted:', jobData);
     };
 
     return (
@@ -41,7 +41,7 @@ export default function PostJob() {
             <h2 className="text-2xl font-bold mb-6 text-center">Post a Job</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Job Title</label>
+                    <label className="block text-sm font-medium text-gray-700">Job Title:</label>
                     <input
                         type="text"
                         name="jobTitle"
@@ -52,7 +52,18 @@ export default function PostJob() {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                    <label className="block text-sm font-medium text-gray-700">Name of Company/Organization:</label> 
+                    <input
+                        type="text"
+                        name="companyName"
+                        value={jobData.companyName}
+                        onChange={handleChange}
+                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">Description:</label>
                     <textarea
                         name="description"
                         value={jobData.description}
@@ -62,7 +73,7 @@ export default function PostJob() {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Qualifications</label>
+                    <label className="block text-sm font-medium text-gray-700">Qualifications:</label>
                     <textarea
                         name="qualifications"
                         value={jobData.qualifications}
@@ -72,7 +83,7 @@ export default function PostJob() {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Responsibility</label>
+                    <label className="block text-sm font-medium text-gray-700">Responsibility:</label>
                     <textarea
                         name="responsibility"
                         value={jobData.responsibility}
@@ -82,7 +93,7 @@ export default function PostJob() {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Location</label>
+                    <label className="block text-sm font-medium text-gray-700">Location:</label>
                     <input
                         type="text"
                         name="location"
@@ -93,7 +104,7 @@ export default function PostJob() {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Salary Range(optional)</label>
+                    <label className="block text-sm font-medium text-gray-700">Salary Range(optional):</label>
                     <input
                         type="text"
                         name="salaryRange"
