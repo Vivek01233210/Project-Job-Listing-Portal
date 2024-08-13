@@ -103,7 +103,6 @@ export default function EmployerDash() {
     }
   };
 
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
