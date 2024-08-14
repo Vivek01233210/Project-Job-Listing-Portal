@@ -12,8 +12,8 @@ export default function Login() {
     const navigate = useNavigate();
 
     // State variables for form fields
-    const [email, setEmail] = useState('user2@gmail.com');
-    const [password, setPassword] = useState('user2@123');
+    const [email, setEmail] = useState('vivek@gmail.com');
+    const [password, setPassword] = useState('vivek@123');
 
     const loginMutation = useMutation({
         mutationKey: ["login"],

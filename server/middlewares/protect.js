@@ -16,7 +16,12 @@ export const protect = async (req, res, next) => {
             return res.status(401).json({ isAuthenticated: false });
         }
 
-        req.user = user;
+        req.user = {
+            fullName: user.fullName,
+            _id: user._id,
+            role: user.role,
+            email: user.email,
+        };
 
         next();
     } catch (error) {

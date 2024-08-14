@@ -13,8 +13,15 @@ export const createJob = async (req, res) => {
 }
 
 export const getAllJobs = async (req, res) => {
+    // console.log(req);
     try {
-        const jobs = await Job.find({})
+        const { title, location } = req.query;
+
+        let filters = {};
+        if (title) filters.jobTitle = { $regex: title, $options: 'i' };
+        if (location) filters.location = { $regex: location, $options: 'i' };
+
+        const jobs = await Job.find(filters)
             .populate({
                 path: 'employer_id',
                 select: 'fullName profilePic headline',

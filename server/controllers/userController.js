@@ -37,35 +37,40 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Please provide email and password' });
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Please provide email and password' });
+        }
+
+        // check if the user exists
+        const user = await User.findOne({ email }).select('+password');
+        if (!user) return res.status(400).json({ error: 'Invalid credentials' });
+
+        // check if the password is correct
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) return res.status(400).json({ error: 'Invalid credentials' });
+
+        // save user in the req object
+        req.user = { id: user._id, role: user.role, fullName: user.fullName, email: user.email };
+
+        // send a token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        res.cookie('token', token, {
+            httpOnly: true,
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1-day
+            secure: process.env.NODE_ENV === 'production',
+        });
+
+        return res.status(200).json({
+            isAuthenticated: true,
+            user: { id: user._id, role: user.role, fullName: user.fullName, email: user.email }
+        });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error: 'Internal server error' });
     }
-
-    // check if the user exists
-    const user = await User.findOne({ email }).select('+password');
-    if (!user) res.status(400).json({ error: 'Invalid credentials' });
-
-    // check if the password is correct
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) return res.status(400).json({ error: 'Invalid credentials' });
-
-    // save user in the req object
-    req.user = { id: user._id, role: user.role, fullName: user.fullName, email: user.email };
-
-    // send a token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-    res.cookie('token', token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1-day
-        secure: process.env.NODE_ENV === 'production',
-    });
-
-    return res.status(200).json({
-        isAuthenticated: true,
-        user: { id: user._id, role: user.role, fullName: user.fullName, email: user.email }
-    });
 };
 
 // logout route
@@ -118,11 +123,11 @@ export const updateProfile = async (req, res) => {
     try {
         const user = await User.findByIdAndUpdate(req.user._id, req.body,
             { new: true, runValidators: true });
-    
+
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-    
+
         return res.status(200).json({ user });
     } catch (error) {
         console.log(error);
@@ -184,7 +189,7 @@ export const updateProfilePic = async (req, res) => {
             return res.status(400).json({ msg: 'No file uploaded or file size exceeds limit' });
         }
         // console.log(file);
-        
+
         const fileDocument = {
             data: file.buffer,
             contentType: file.mimetype
