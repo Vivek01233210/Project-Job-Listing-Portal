@@ -18,7 +18,7 @@ export default function JobList() {
         queryFn: () => getAllJobsAPI({ title: jobTitleRef.current.value, location: locationRef.current.value }),
     });
 
-    console.log(jobs);
+    // console.log(jobs);
     // console.log(isLoading);
 
     const applyJobMutation = useMutation({

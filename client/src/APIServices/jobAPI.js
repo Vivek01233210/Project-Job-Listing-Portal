@@ -31,3 +31,11 @@ export const applyJobAPI = async (jobId) => {
 
     return response.data;
 }
+
+export const getMyApplicationsAPI = async () => {
+    const response = await axios.get(`${baseUrl}/my-application`, {
+        withCredentials: true
+    });
+
+    return response.data;
+}

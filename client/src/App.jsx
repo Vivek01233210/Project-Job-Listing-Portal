@@ -13,8 +13,7 @@ import Protect from './Pages/ProtectRoute.jsx';
 import Public from './Pages/PublicRoute.jsx';
 import PostJob from './Pages/PostJob.jsx';
 import JobList from './Pages/JobList.jsx';
-
-
+import MyApplications from './Pages/MyApplications.jsx';
 
 
 function App() {
@@ -46,6 +45,7 @@ function App() {
         { path: 'dashboard', element: <Dashboard /> },
         { path: 'post-job', element: <PostJob /> },
         { path: 'jobs', element: <JobList /> },
+        { path: 'my-application', element: <MyApplications /> },
       ]
     },
   ]);

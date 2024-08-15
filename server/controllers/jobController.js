@@ -58,4 +58,25 @@ export const createJobApplication = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
-    
+
+export const getMyApplications = async (req, res) => {
+    const jobSeekerId = req.user._id;
+
+    try {
+        const applications = await JobApplication.find({ job_seeker_id: jobSeekerId })
+            .populate({
+                path: 'job_id',
+                select: 'jobTitle companyName',
+            })
+        
+        res.status(200).json({ data: applications });
+
+    } catch (error) {
+        console.error('Error getting applications:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
+
+
