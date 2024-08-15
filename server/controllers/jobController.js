@@ -1,3 +1,4 @@
+import JobApplication from "../models/jobApplicationModel.js";
 import Job from "../models/jobModel.js";
 
 
@@ -10,7 +11,7 @@ export const createJob = async (req, res) => {
         console.error('Error creating job:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
 
 export const getAllJobs = async (req, res) => {
     // console.log(req);
@@ -32,3 +33,29 @@ export const getAllJobs = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const createJobApplication = async (req, res) => {
+    const { jobId } = req.body;
+    const jobSeekerId = req.user._id;
+
+    try {
+        // Check if the user has already applied for this job
+        const existingApplication = await JobApplication.findOne({ job_seeker_id: jobSeekerId, job_id: jobId });
+
+        if (existingApplication) {
+            return res.status(400).json({ message: 'You have already applied for this job.' });
+        }
+
+        // Create a new job application
+        const newApplication = await JobApplication.create({ job_seeker_id: jobSeekerId, job_id: jobId });
+
+        // Add the application to the job
+        await Job.findByIdAndUpdate(jobId, { $push: { applicants: jobSeekerId } });
+
+        res.status(201).json({ message: 'Job application created successfully', data: newApplication });
+    } catch (error) {
+        console.error('Error creating job application:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+    

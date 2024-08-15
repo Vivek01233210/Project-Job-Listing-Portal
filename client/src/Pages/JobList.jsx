@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllJobsAPI } from "../APIServices/jobAPI.js";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { applyJobAPI, getAllJobsAPI } from "../APIServices/jobAPI.js";
 import { CiUser } from "react-icons/ci";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 
 export default function JobList() {
@@ -9,17 +11,32 @@ export default function JobList() {
     const jobTitleRef = useRef(null);
     const locationRef = useRef(null);
 
+    const { user } = useSelector(state => state.auth);
+
     const { data: jobs, refetch, isLoading, isFetching } = useQuery({
         queryKey: ['get-all-jobs'],
-        queryFn: () => getAllJobsAPI({title: jobTitleRef.current.value, location: locationRef.current.value}),
+        queryFn: () => getAllJobsAPI({ title: jobTitleRef.current.value, location: locationRef.current.value }),
     });
 
-    // console.log(jobs);
-    // console.log(isLoading)
+    console.log(jobs);
+    // console.log(isLoading);
+
+    const applyJobMutation = useMutation({
+        mutationKey: ["login"],
+        mutationFn: applyJobAPI,
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         refetch();
+    };
+
+    const handleApply = (jobId) => {
+        applyJobMutation
+            .mutateAsync({ jobId })
+            // .then(() => refetch())
+            .then(() => toast.success("Applied successfully"))
+            .catch((err) => toast.error(err.response.data.message));
     };
 
     return (
@@ -37,7 +54,7 @@ export default function JobList() {
                                 </div>
                                 <div className="mb-4">
                                     <label className="block text-gray-700 font-bold mb-2" htmlFor="location">Location</label>
-                                    <input className="w-full p-2 border border-gray-300 rounded" type="text" id="location" name="location" ref={locationRef}/>
+                                    <input className="w-full p-2 border border-gray-300 rounded" type="text" id="location" name="location" ref={locationRef} />
                                 </div>
                                 <button className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition duration-300">Search</button>
                             </form>
@@ -82,10 +99,15 @@ export default function JobList() {
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <button className="mt-4 bg-gradient-to-r from-blue-500 to-green-500 text-white p-2 rounded-lg hover:from-blue-600 hover:to-green-600 transition duration-300 font-semibold shadow-lg hover:shadow-xl">
-                                            Apply Now
-                                        </button>
+                                        {job?.applicants?.includes(user._id) ? (
+                                            <p className="text-center text-green-500 font-semibold">Already Applied!</p>
+                                        ) : (
+                                            <button className="mt-4 bg-gradient-to-r from-blue-500 to-green-500 text-white p-2 rounded-lg hover:from-blue-600 hover:to-green-600 transition duration-300 font-semibold shadow-lg hover:shadow-xl"
+                                                onClick={() => handleApply(job._id)}
+                                            >
+                                                Apply Now
+                                            </button>
+                                        )}
                                     </div>
                                 );
                             })}

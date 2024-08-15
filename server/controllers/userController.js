@@ -90,10 +90,17 @@ export const checkUser = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // find the user
-        const user = await User.findById(decoded.id);
+        const currentUser = await User.findById(decoded.id);
 
-        if (!user) {
+        if (!currentUser) {
             return res.status(401).json({ isAuthenticated: false });
+        }
+
+        const user = {
+            _id: currentUser._id,
+            role: currentUser.role,
+            fullName: currentUser.fullName,
+            email: currentUser.email
         }
 
         return res.status(200).json({ isAuthenticated: true, user });

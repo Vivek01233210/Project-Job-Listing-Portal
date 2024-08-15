@@ -23,3 +23,11 @@ export const getAllJobsAPI = async (filters) => {
 
     return response.data;
 };
+
+export const applyJobAPI = async (jobId) => {
+    const response = await axios.post(`${baseUrl}/apply-job`, jobId, {
+        withCredentials: true
+    });
+
+    return response.data;
+}
