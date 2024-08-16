@@ -81,7 +81,8 @@ export const getMyJobs = async (req, res) => {
     const employerId = req.user._id;
 
     try {
-        const jobs = await Job.find({ employer_id: employerId });
+        const jobs = await Job.find({ employer_id: employerId })
+        .sort({ createdAt: -1 });
         res.status(200).json({ data: jobs });
     } catch (error) {
         console.error('Error getting jobs:', error);
@@ -89,4 +90,20 @@ export const getMyJobs = async (req, res) => {
     }
 }
 
+export const deleteJob = async (req, res) => {
+    const jobId = req.params.jobId;
+    const employerId = req.user._id;
 
+    try {
+        const job = await Job.findOneAndDelete({ _id: jobId, employer_id: employerId });
+
+        if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+
+        res.status(200).json({ message: 'Job deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting job:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

@@ -47,3 +47,11 @@ export const getMyJobsAPI = async () => {
 
     return response.data;
 };
+
+export const deleteJobAPI = async (jobId) => {
+    const response = await axios.delete(`${baseUrl}/${jobId}`, {
+        withCredentials: true
+    });
+
+    return response.data;
+};
