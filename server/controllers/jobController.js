@@ -68,7 +68,7 @@ export const getMyApplications = async (req, res) => {
                 path: 'job_id',
                 select: 'jobTitle companyName',
             })
-        
+
         res.status(200).json({ data: applications });
 
     } catch (error) {
@@ -82,7 +82,7 @@ export const getMyJobs = async (req, res) => {
 
     try {
         const jobs = await Job.find({ employer_id: employerId })
-        .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 });
         res.status(200).json({ data: jobs });
     } catch (error) {
         console.error('Error getting jobs:', error);
@@ -93,7 +93,7 @@ export const getMyJobs = async (req, res) => {
 export const deleteJob = async (req, res) => {
     const jobId = req.params.jobId;
     const employerId = req.user._id;
-
+    // console.log(jobId, employerId);
     try {
         const job = await Job.findOneAndDelete({ _id: jobId, employer_id: employerId });
 

@@ -9,6 +9,6 @@ router.get('/', protect, getAllJobs);
 router.get('/my-jobs', protect, getMyJobs);
 router.post('/apply-job', protect, createJobApplication);
 router.get('/my-application', protect, getMyApplications);
-router.delete('/:id', protect, deleteJob);
+router.delete('/:jobId', protect, deleteJob);
 
 export default router;

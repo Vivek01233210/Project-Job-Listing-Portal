@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { formatDate } from "../utility/dateFormatter.js";
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteJobAPI, getMyJobsAPI } from "../APIServices/jobAPI.js";
 
 export default function ViewJobList() {
+
+    const queryClient = useQueryClient();
+
     const [showModal, setShowModal] = useState(false);
     const [jobToDelete, setJobToDelete] = useState(null);
 
@@ -15,7 +18,7 @@ export default function ViewJobList() {
     const deleteMutation = useMutation({
         mutationKey: ["delete-job"],
         mutationFn: deleteJobAPI,
-    })
+    });
 
     const handleDeleteClick = (job) => {
         setJobToDelete(job);
@@ -23,7 +26,13 @@ export default function ViewJobList() {
     };
 
     const confirmDelete = () => {
-        setShowModal(false);
+        deleteMutation
+            .mutateAsync(jobToDelete?._id)
+            .then(() => {
+                setJobToDelete(null);
+                setShowModal(false);
+                queryClient.invalidateQueries('my-jobs');
+            });
     };
 
     const cancelDelete = () => {
