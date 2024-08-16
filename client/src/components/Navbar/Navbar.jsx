@@ -63,6 +63,9 @@ export default function Navbar() {
                                     <li className="nav-item">
                                         <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/post-job">Post Job</Link>
                                     </li>
+                                    <li className="nav-item">
+                                        <Link className="text-gray-800 hover:text-gray-600" aria-current="page" to="/view-jobs">View Jobs</Link>
+                                    </li>
                                 </>
                             )}
                             {isAuthenticated && (

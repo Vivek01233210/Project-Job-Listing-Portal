@@ -36,7 +36,6 @@ export const logoutAPI = async () => {
     return response.data;
 };
 
-
 export const checkUserAPI = async () => {
     const response = await axios.get(`${baseUrl}/user/check-user`, {
         withCredentials: true

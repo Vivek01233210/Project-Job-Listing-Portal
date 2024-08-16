@@ -14,6 +14,8 @@ import Public from './Pages/PublicRoute.jsx';
 import PostJob from './Pages/PostJob.jsx';
 import JobList from './Pages/JobList.jsx';
 import MyApplications from './Pages/MyApplications.jsx';
+import ViewApplication from './Pages/ViewApplication.jsx';
+import ViewJobList from './Pages/ViewJobList.jsx';
 
 
 function App() {
@@ -40,12 +42,13 @@ function App() {
       element: <MainLayout />,
       children: [
         { index: true, element: <Home /> },
-        { path: 'login', element: <Login />},
+        { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: 'dashboard', element: <Dashboard /> },
         { path: 'post-job', element: <PostJob /> },
         { path: 'jobs', element: <JobList /> },
         { path: 'my-application', element: <MyApplications /> },
+        { path: 'view-jobs', element: <ViewJobList /> },
       ]
     },
   ]);

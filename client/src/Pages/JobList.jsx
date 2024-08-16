@@ -75,14 +75,14 @@ export default function JobList() {
                                 );
 
                                 return (
-                                    <div key={job._id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-gray-100 to-gray-200">
-                                        <h2 className="text-2xl font-semibold mb-2">{job.jobTitle}</h2>
-                                        <p className="text-gray-700 mb-2"><span className="font-bold">Company:</span> {job.companyName}</p>
-                                        <p className="text-gray-700 mb-2"><span className="font-bold">Location:</span> {job.location}</p>
-                                        <p className="text-gray-700 mb-2"><span className="font-bold">Job Description:</span> {job.description}</p>
-                                        <p className="text-gray-700 mb-2"><span className="font-bold">Qualifications:</span> {job.qualifications}</p>
-                                        <p className="text-gray-700 mb-2"><span className="font-bold">Responsibilities:</span> {job.responsibility}</p>
-                                        <p className="text-gray-700 mb-2"><span className="font-bold">Salary Range:</span> {job.salaryRange}</p>
+                                    <div key={job?._id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-r from-gray-100 to-gray-200">
+                                        <h2 className="text-2xl font-semibold mb-2">{job?.jobTitle}</h2>
+                                        <p className="text-gray-700 mb-2"><span className="font-bold">Company:</span> {job?.companyName}</p>
+                                        <p className="text-gray-700 mb-2"><span className="font-bold">Location:</span> {job?.location}</p>
+                                        <p className="text-gray-700 mb-2"><span className="font-bold">Job Description:</span> {job?.description}</p>
+                                        <p className="text-gray-700 mb-2"><span className="font-bold">Qualifications:</span> {job?.qualifications}</p>
+                                        <p className="text-gray-700 mb-2"><span className="font-bold">Responsibilities:</span> {job?.responsibility}</p>
+                                        <p className="text-gray-700 mb-2"><span className="font-bold">Salary Range:</span> {job?.salaryRange}</p>
 
                                         {/* Employer Section */}
                                         <div className="mt-4 p-4 border-t-[1px] border-gray-400">
