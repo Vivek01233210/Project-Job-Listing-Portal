@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { formatDate } from "../utility/dateFormatter.js";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteJobAPI, getMyJobsAPI } from "../APIServices/jobAPI.js";
+import { toast } from 'react-toastify';
+import { Link } from "react-router-dom";
 
 export default function ViewJobList() {
 
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
 
     const [showModal, setShowModal] = useState(false);
     const [jobToDelete, setJobToDelete] = useState(null);
 
-    const { data: jobs, isLoading } = useQuery({
+    const { data: jobs, refetch } = useQuery({
         queryKey: ['my-jobs'],
         queryFn: getMyJobsAPI
     });
@@ -31,7 +33,8 @@ export default function ViewJobList() {
             .then(() => {
                 setJobToDelete(null);
                 setShowModal(false);
-                queryClient.invalidateQueries('my-jobs');
+                toast.success('Job deleted successfully');
+                refetch();
             });
     };
 
@@ -55,7 +58,10 @@ export default function ViewJobList() {
                         <p className="">No. of applicants: {job?.applicants?.length}</p>
                         <p className="text-gray-500 text-sm">Posted on: {formatDate(job?.createdAt)}</p>
                         <div className="mt-4 flex space-x-2">
-                            <button className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded">Edit</button>
+                            <Link to={`/edit-job/${job?._id}`}
+                             className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded">
+                                Edit
+                            </Link>
                             <button
                                 className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded"
                                 onClick={() => handleDeleteClick(job)}

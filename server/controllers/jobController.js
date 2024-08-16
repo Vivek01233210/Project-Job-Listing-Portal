@@ -34,6 +34,22 @@ export const getAllJobs = async (req, res) => {
     }
 };
 
+export const getJobById = async (req, res) => {
+    try {
+        // const jobId = req.params.id;
+        const job = await Job.findById(req.params.jobId);
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        res.status(200).json(job);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
 export const createJobApplication = async (req, res) => {
     const { jobId } = req.body;
     const jobSeekerId = req.user._id;
@@ -107,3 +123,21 @@ export const deleteJob = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+export const updateJob = async (req, res) => {
+    const jobId = req.params.jobId;
+    const employerId = req.user._id;
+
+    try {
+        const job = await Job.findOneAndUpdate({ _id: jobId, employer_id: employerId }, req.body, { new: true });
+
+        if (!job) {
+            return res.status(404).json({ message: 'Job not found' });
+        }
+
+        res.status(200).json({ message: 'Job updated successfully' });
+    } catch (error) {
+        console.error('Error updating job:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}

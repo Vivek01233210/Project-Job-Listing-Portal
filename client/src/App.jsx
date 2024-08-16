@@ -15,6 +15,7 @@ import PostJob from './Pages/PostJob.jsx';
 import JobList from './Pages/JobList.jsx';
 import MyApplications from './Pages/MyApplications.jsx';
 import ViewJobList from './Pages/ViewJobList.jsx';
+import EditJob from './Pages/EditJob.jsx';
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
         { path: 'jobs', element: <JobList /> },
         { path: 'my-application', element: <MyApplications /> },
         { path: 'view-jobs', element: <ViewJobList /> },
+        { path: 'edit-job/:jobId', element: < EditJob /> },
       ]
     },
   ]);

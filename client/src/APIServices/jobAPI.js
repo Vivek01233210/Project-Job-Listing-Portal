@@ -48,6 +48,22 @@ export const getMyJobsAPI = async () => {
     return response.data;
 };
 
+export const getJobByIdAPI = async (jobId) => {
+    const response = await axios.get(`${baseUrl}/${jobId}`, {
+        withCredentials: true
+    });
+
+    return response.data;
+};
+
+export const updateJobAPI = async (jobId, jobData) => {
+    const response = await axios.put(`${baseUrl}/${jobId}`, jobData, {
+        withCredentials: true
+    });
+
+    return response.data;
+}
+
 export const deleteJobAPI = async (jobId) => {
     const response = await axios.delete(`${baseUrl}/${jobId}`, {
         withCredentials: true
