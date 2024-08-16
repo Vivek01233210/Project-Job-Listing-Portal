@@ -1,11 +1,12 @@
 import express from 'express';
 import { protect } from '../middlewares/protect.js';
-import { createJob, createJobApplication, getAllJobs, getMyApplications } from '../controllers/jobController.js';
+import { createJob, createJobApplication, getAllJobs, getMyApplications, getMyJobs } from '../controllers/jobController.js';
 
 const router = express.Router();
 
 router.post('/create-job', protect, createJob);
 router.get('/', protect, getAllJobs);
+router.get('/my-jobs', protect, getMyJobs);
 router.post('/apply-job', protect, createJobApplication);
 router.get('/my-application', protect, getMyApplications);
 

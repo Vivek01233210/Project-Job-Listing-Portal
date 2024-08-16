@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const baseUrl = process.env.REACT_APP_API_URL;
-// console.log(baseUrl)
+
 const baseUrl = 'http://localhost:5000/api/v1/job';
 
 export const createJobAPI = async (jobData) => {
@@ -30,7 +30,7 @@ export const applyJobAPI = async (jobId) => {
     });
 
     return response.data;
-}
+};
 
 export const getMyApplicationsAPI = async () => {
     const response = await axios.get(`${baseUrl}/my-application`, {
@@ -38,5 +38,12 @@ export const getMyApplicationsAPI = async () => {
     });
 
     return response.data;
-}
+};
 
+export const getMyJobsAPI = async () => {
+    const response = await axios.get(`${baseUrl}/my-jobs`, {
+        withCredentials: true
+    });
+
+    return response.data;
+};

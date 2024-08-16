@@ -14,7 +14,6 @@ import Public from './Pages/PublicRoute.jsx';
 import PostJob from './Pages/PostJob.jsx';
 import JobList from './Pages/JobList.jsx';
 import MyApplications from './Pages/MyApplications.jsx';
-import ViewApplication from './Pages/ViewApplication.jsx';
 import ViewJobList from './Pages/ViewJobList.jsx';
 
 

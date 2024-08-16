@@ -1,33 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { formatDate } from "../utility/dateFormatter.js";
+import { useQuery } from '@tanstack/react-query';
+import { getMyJobsAPI } from "../APIServices/jobAPI.js";
 
+export default function ViewJobList() {
 
-export default function ViewJobList({ jobId }) {
+    const { data:jobs, isLoading } = useQuery({
+        queryKey: ['my-jobs'],
+        queryFn: getMyJobsAPI
+    });
 
+    // console.log(data);
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold mb-6 text-center">Job Applicants</h1>
-            <div className="space-y-6">
-                {[1, 2, 3]?.map((applicant) => (
-                    <div key={applicant?.id} className="bg-white shadow-md rounded-lg p-6">
-                        <h2 className="text-xl font-semibold mb-2">{applicant?.name}</h2>
-                        <p className="text-gray-700 mb-1">Email: {applicant?.email}</p>
-                        <p className="text-gray-700 mb-1">
-                            Resume:{" "}
-                            <a
-                                href={applicant?.resumeLink}
-                                className="text-blue-500"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                View Resume
-                            </a>
-                        </p>
-                        <p className="text-gray-500 text-sm">
-                            Applied on: {formatDate(applicant?.appliedDate)}
-                        </p>
+            <h1 className="text-2xl font-bold mb-4">Job Status</h1>
+            <div className="space-y-4">
+                {jobs?.data?.map((job) => (
+                    <div key={job?._id} className="p-4 border rounded shadow-sm">
+                        <h2 className="text-xl font-semibold">{job?.jobTitle}</h2>
+                        <p className="text-gray-600">{job?.location}</p>
+                        <p className="text-gray-600">{job?.salaryRange}</p>
+                        <p className="text-gray-600">{job?.description}</p>
+                        <p className="">No. of applicants: {job?.applicants?.length}</p>
+                        <p className="text-gray-500 text-sm">Posted on: {formatDate(job?.createdAt)}</p>
                     </div>
                 ))}
             </div>

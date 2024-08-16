@@ -77,6 +77,16 @@ export const getMyApplications = async (req, res) => {
     }
 }
 
+export const getMyJobs = async (req, res) => {
+    const employerId = req.user._id;
 
+    try {
+        const jobs = await Job.find({ employer_id: employerId });
+        res.status(200).json({ data: jobs });
+    } catch (error) {
+        console.error('Error getting jobs:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 
 
