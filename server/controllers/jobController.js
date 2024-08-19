@@ -49,6 +49,25 @@ export const getJobById = async (req, res) => {
     }
 };
 
+export const getJobByIdWithApplicants = async (req, res) => {
+    try {
+        const jobId = req.params.jobId;
+        const job = await Job.findById(jobId)
+            .populate({
+                path: 'applicants',
+                select: 'fullName email resume linkedIn mobile city state country headline',
+            });
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        return res.status(200).json(job);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+}
 
 export const createJobApplication = async (req, res) => {
     const { jobId } = req.body;
@@ -72,6 +91,31 @@ export const createJobApplication = async (req, res) => {
     } catch (error) {
         console.error('Error creating job application:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+export const updateApplicationStatus = async (req, res) => {
+    const { status, jobId, applicantId } = req.body;
+    // console.log(req.body)
+
+    try {
+        const application = await JobApplication.findOneAndUpdate({ job_id: jobId, job_seeker_id: applicantId }, { status }, { new: true });
+        
+        const job = await Job.findById(jobId);
+
+        if (!application || !job) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+console.log(job)
+        if (status === 'rejected') {
+            job.applicants.filter((id) => id.toString() !== applicantId.toString());
+            await job.save();
+        }
+
+        return res.status(200).json({ message: 'Application status updated successfully' });
+    } catch (error) {
+        console.error('Error updating application status:', error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

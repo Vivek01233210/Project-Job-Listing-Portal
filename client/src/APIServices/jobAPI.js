@@ -56,6 +56,23 @@ export const getJobByIdAPI = async (jobId) => {
     return response.data;
 };
 
+export const getJobByIdWithApplicantsAPI = async (jobId) => {
+    const response = await axios.get(`${baseUrl}/${jobId}/applicants`, {
+        withCredentials: true
+    });
+
+    return response.data;
+};
+
+export const updateApplicationAPI = async (data) => {
+    // console.log(data)
+    const response = await axios.put(`${baseUrl}/update-application/${data.applicantId}`, data, {
+        withCredentials: true
+    });
+
+    return response.data;
+};
+
 export const updateJobAPI = async (jobId, jobData) => {
     const response = await axios.put(`${baseUrl}/${jobId}`, jobData, {
         withCredentials: true

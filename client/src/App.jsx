@@ -16,6 +16,7 @@ import JobList from './Pages/JobList.jsx';
 import MyApplications from './Pages/MyApplications.jsx';
 import ViewJobList from './Pages/ViewJobList.jsx';
 import EditJob from './Pages/EditJob.jsx';
+import ShowApplications from './Pages/ShowApplications.jsx';
 
 
 function App() {
@@ -49,7 +50,8 @@ function App() {
         { path: 'jobs', element: <JobList /> },
         { path: 'my-application', element: <MyApplications /> },
         { path: 'view-jobs', element: <ViewJobList /> },
-        { path: 'edit-job/:jobId', element: < EditJob /> },
+        { path: 'view-jobs/edit-job/:jobId', element: < EditJob /> },
+        { path: 'view-jobs/:jobId', element: < ShowApplications /> },
       ]
     },
   ]);

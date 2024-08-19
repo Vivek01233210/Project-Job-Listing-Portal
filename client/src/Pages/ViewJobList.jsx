@@ -58,8 +58,8 @@ export default function ViewJobList() {
                         <p className="">No. of applicants: {job?.applicants?.length}</p>
                         <p className="text-gray-500 text-sm">Posted on: {formatDate(job?.createdAt)}</p>
                         <div className="mt-4 flex space-x-2">
-                            <Link to={`/edit-job/${job?._id}`}
-                             className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded">
+                            <Link to={`/view-jobs/edit-job/${job?._id}`}
+                                className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded">
                                 Edit
                             </Link>
                             <button
@@ -68,7 +68,10 @@ export default function ViewJobList() {
                             >
                                 Delete
                             </button>
-                            <button className="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded">Show Applicants</button>
+                            <Link to={`/view-jobs/${job?._id}`}
+                                className="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded"
+                            >Show Applicants
+                            </Link>
                         </div>
                     </div>
                 ))}
