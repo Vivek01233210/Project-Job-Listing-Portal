@@ -61,6 +61,7 @@ export default function ShowApplications() {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Applicant{job?.applicants?.length > 1 ? 's' : ''}</h1>
         <div className="space-y-4">
+          {job?.applicants?.length === 0 && <div>Nobody has yet applied for this job post!</div>}
           {job?.applicants?.map((applicant) => (
             <div key={applicant?._id} className="p-4 border rounded shadow-sm">
               <h2 className="text-xl font-semibold">{applicant?.fullName}</h2>
