@@ -99,7 +99,7 @@ export default function JobList() {
                                                 </div>
                                             </div>
                                         </div>
-                                        {job?.applicants?.includes(user._id) ? (
+                                        {job?.applicants?.includes(user?._id) ? (
                                             <p className="text-center text-green-500 font-semibold">Already Applied!</p>
                                         ) : (
                                             <button className="mt-4 bg-gradient-to-r from-blue-500 to-green-500 text-white p-2 rounded-lg hover:from-blue-600 hover:to-green-600 transition duration-300 font-semibold shadow-lg hover:shadow-xl"
