@@ -4,6 +4,7 @@ import { CiUser } from "react-icons/ci";
 import { useRef } from "react";
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { ImSpinner, ImSpinner8 } from "react-icons/im";
 
 
 export default function JobList() {
@@ -66,7 +67,11 @@ export default function JobList() {
                         <h1 className="text-2xl font-bold mb-4">Job Listings</h1>
                         <div className="flex flex-col gap-4">
                             {jobs?.data?.length === 0 && <p className="text-center">No jobs found</p>}
-                            {(isLoading || isFetching) && <p className="text-center">Loading...</p>}
+                            {(isLoading || isFetching) && (
+                                <div className="py-20">
+                                    <ImSpinner8 className="animate-spin h-10 w-10 mx-auto" />
+                                </div>
+                            )}
                             {/* {isFetching && <p className="text-center">Loading...</p>} */}
                             {!isFetching && jobs?.data?.map((job) => {
                                 // Convert binary data to base64 string

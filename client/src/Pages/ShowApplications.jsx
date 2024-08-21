@@ -2,11 +2,14 @@ import { useParams } from 'react-router-dom';
 import { getJobByIdWithApplicantsAPI, updateApplicationAPI } from '../APIServices/jobAPI.js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { ImSpinner8 } from "react-icons/im";
+
+
 
 export default function ShowApplications() {
   const { jobId } = useParams();
 
-  const { data: job, isLoading: jobLoading, error: jobError } = useQuery({
+  const { data: job, isLoading: jobLoading, error: jobError, refetch } = useQuery({
     queryKey: ['job', jobId],
     queryFn: () => getJobByIdWithApplicantsAPI(jobId),
   });
@@ -16,6 +19,8 @@ export default function ShowApplications() {
     mutationKey: 'update',
     mutationFn: (data) => updateApplicationAPI(data),
   })
+
+  const { isPending } = updateApplicationMutation;
 
   const handleViewResume = (buffer) => {
     const blob = new Blob([new Uint8Array(buffer)], { type: 'application/pdf' });
@@ -29,7 +34,6 @@ export default function ShowApplications() {
       .then(() => toast.success('Applicant accepted!'))
       .then(() => console.log(`Accepted applicant with ID: ${applicantId}`))
       .catch((error) => { console.log(error) })
-    
   };
 
   const handleReject = (applicantId) => {
@@ -37,8 +41,8 @@ export default function ShowApplications() {
       .mutateAsync({ applicantId, status: 'rejected', jobId: jobId })
       .then(() => { toast.info('Applicant rejected!') })
       .then(() => { console.log(`Rejected applicant with ID: ${applicantId}`) })
+      .then(() => refetch())
       .catch((error) => { console.log(error) })
-    
   };
 
   if (jobLoading) return <div>Loading...</div>;
@@ -61,7 +65,7 @@ export default function ShowApplications() {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Applicant{job?.applicants?.length > 1 ? 's' : ''}</h1>
         <div className="space-y-4">
-          {job?.applicants?.length === 0 && <div>Nobody has yet applied for this job post!</div>}
+          {job?.applicants?.length === 0 && <div>No application found!</div>}
           {job?.applicants?.map((applicant) => (
             <div key={applicant?._id} className="p-4 border rounded shadow-sm">
               <h2 className="text-xl font-semibold">{applicant?.fullName}</h2>
@@ -78,18 +82,22 @@ export default function ShowApplications() {
                 View Resume
               </button>}
               <div className="my-4 flex space-x-4">
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleReject(applicant._id)}
-                >
-                  Reject
-                </button>
-                <button
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleAccept(applicant._id)}
-                >
-                  Accept
-                </button>
+                {isPending ? <ImSpinner8 className='animate-spin text-gray-800 text-2xl' /> :
+                  <>
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded"
+                      onClick={() => handleReject(applicant._id)}
+                    >
+                      Reject
+                    </button>
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded"
+                      onClick={() => handleAccept(applicant._id)}
+                    >
+                      Accept
+                    </button>
+                  </>
+                }
               </div>
             </div>
 

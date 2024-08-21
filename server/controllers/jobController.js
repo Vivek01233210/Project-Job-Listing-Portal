@@ -100,15 +100,15 @@ export const updateApplicationStatus = async (req, res) => {
 
     try {
         const application = await JobApplication.findOneAndUpdate({ job_id: jobId, job_seeker_id: applicantId }, { status }, { new: true });
-        
+
         const job = await Job.findById(jobId);
 
         if (!application || !job) {
             return res.status(404).json({ message: 'Application not found' });
         }
-console.log(job)
+
         if (status === 'rejected') {
-            job.applicants.filter((id) => id.toString() !== applicantId.toString());
+            job.applicants = job.applicants.filter((id) => id.toString() !== applicantId.toString());
             await job.save();
         }
 

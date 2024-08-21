@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchProfileImageAPI, fetchResumeAPI, getUserProfileAPI, updateProfileAPI, updateProfileImageAPI, updateResumeAPI } from '../../APIServices/userAPI.js';
 import { FaDownload } from "react-icons/fa";
 import { Buffer } from 'buffer';
+import { ImSpinner8 } from 'react-icons/im';
 
 export default function JobSeekerDash() {
 
@@ -15,17 +16,17 @@ export default function JobSeekerDash() {
 
   const [imageSrc, setImageSrc] = useState('');
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ["user-auth"],
     queryFn: getUserProfileAPI,
   });
 
-  const { data: resumeData } = useQuery({
+  const { data: resumeData, isLoading: resumeLoading } = useQuery({
     queryKey: ["fetch-resume"],
     queryFn: fetchResumeAPI,
   });
 
-  const { data: profilePic } = useQuery({
+  const { data: profilePic, isLoading: dpLoading } = useQuery({
     queryKey: ["fetch-profile-pic"],
     queryFn: fetchProfileImageAPI,
   });
@@ -86,6 +87,8 @@ export default function JobSeekerDash() {
     mutationFn: updateProfileAPI,
   });
 
+  const { isPending: profileUpdatePending } = updateProfile;
+
   const updateResume = useMutation({
     mutationKey: ["update-resume"],
     mutationFn: updateResumeAPI,
@@ -111,7 +114,7 @@ export default function JobSeekerDash() {
   const handleProfilePicChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.size >  1 * 1024 * 1024) {
+      if (file.size > 1 * 1024 * 1024) {
         toast.error('File size cannot exceed 1 MB!');
         return;
       }
@@ -134,7 +137,7 @@ export default function JobSeekerDash() {
   const handleResumeChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.size >  1 * 1024 * 1024) {
+      if (file.size > 1 * 1024 * 1024) {
         toast.error('File size cannot exceed 1 MB');
         return;
       }
@@ -172,10 +175,12 @@ export default function JobSeekerDash() {
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            {imageSrc ? (
-              <img src={imageSrc} alt="Profile" className="w-24 h-24 shadow-md rounded-full" />
-            ) : (
-              <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
+            {dpLoading ? <ImSpinner8 className='h-24 w-24 text-gray-700 animate-spin' /> : (
+              imageSrc ? (
+                <img src={imageSrc} alt="Profile" className="w-24 h-24 shadow-md rounded-full" />
+              ) : (
+                <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
+              )
             )}
             <button onClick={() => imageInputRef.current.click()} className="absolute bottom-1 right-1 bg-gray-300 p-1 rounded-full">
               <HiPencil />
@@ -314,6 +319,7 @@ export default function JobSeekerDash() {
         <div className="mb-6">
           <h3 className="text-xl font-bold mb-2">Upload Resume</h3>
           <div className='flex gap-4 items-center'>
+            {resumeLoading && <ImSpinner8 className='h-12 w-12 text-gray-700 animate-spin' />}
             {
               resumeData?.data &&
               <button onClick={handleDownloadResume}
@@ -332,12 +338,16 @@ export default function JobSeekerDash() {
             </div>
           </div>
         </div>
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
-          onClick={handleSave}
-        >
-          Save Changes
-        </button>
+        {
+          profileUpdatePending ? <ImSpinner8 className='h-12 w-12 text-gray-700 animate-spin' /> : (
+            <button
+              className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+              onClick={handleSave}
+            >
+              Save Changes
+            </button>
+          )
+        }
       </div>
     </div>
   );
