@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatDate } from "../utility/dateFormatter.js";
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { deleteJobAPI, getMyJobsAPI } from "../APIServices/jobAPI.js";
 import { toast } from 'react-toastify';
 import { Link } from "react-router-dom";
+import { ImSpinner8 } from "react-icons/im";
 
 export default function ViewJobList() {
-
-    // const queryClient = useQueryClient();
 
     const [showModal, setShowModal] = useState(false);
     const [jobToDelete, setJobToDelete] = useState(null);
 
-    const { data: jobs, refetch } = useQuery({
+    const { data: jobs, isLoading: jobsLoading, refetch } = useQuery({
         queryKey: ['my-jobs'],
         queryFn: getMyJobsAPI
     });
@@ -43,12 +42,15 @@ export default function ViewJobList() {
         setJobToDelete(null);
     };
 
-    // console.log(data);
-
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Posted jobs</h1>
             <div className="space-y-4">
+                {jobsLoading && (
+                    <div className="py-20">
+                        <ImSpinner8 className="w-12 h-12 text-gray-700 animate-spin mx-auto" />
+                    </div>
+                )}
                 {jobs?.data?.map((job) => (
                     <div key={job?._id} className="p-4 border rounded shadow-sm">
                         <h2 className="text-xl font-semibold">{job?.jobTitle}</h2>

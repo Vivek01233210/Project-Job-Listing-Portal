@@ -72,7 +72,6 @@ export default function JobList() {
                                     <ImSpinner8 className="animate-spin h-10 w-10 mx-auto" />
                                 </div>
                             )}
-                            {/* {isFetching && <p className="text-center">Loading...</p>} */}
                             {!isFetching && jobs?.data?.map((job) => {
                                 // Convert binary data to base64 string
                                 const base64String = btoa(

@@ -5,6 +5,7 @@ import { fetchProfileImageAPI, getUserProfileAPI, updateProfileAPI, updateProfil
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { Buffer } from 'buffer';
+import { ImSpinner8 } from 'react-icons/im';
 
 export default function EmployerDash() {
 
@@ -13,12 +14,12 @@ export default function EmployerDash() {
 
   const [imageSrc, setImageSrc] = useState('');
 
-  const { data: profilePic } = useQuery({
+  const { data: profilePic, isLoading: dpLoading } = useQuery({
     queryKey: ["fetch-profile-pic"],
     queryFn: fetchProfileImageAPI,
   });
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading: profileLoading } = useQuery({
     queryKey: ["user-auth"],
     queryFn: getUserProfileAPI,
   });
@@ -28,6 +29,7 @@ export default function EmployerDash() {
     mutationKey: ["update-profile"],
     mutationFn: updateProfileAPI,
   });
+  const { isPending: profilePending } = updateProfile;
 
   useEffect(() => {
     if (profilePic && profilePic.data) {
@@ -79,6 +81,7 @@ export default function EmployerDash() {
     mutationKey: ["update-profile-pic"],
     mutationFn: updateProfileImageAPI,
   });
+  const { isPending: dpPending } = updateProfilePic;
 
   const handleProfilePicChange = (event) => {
     const file = event.target.files[0];
@@ -129,16 +132,18 @@ export default function EmployerDash() {
       .catch((error) => console.log(error));
 
   };
-  
+
   return (
     <div className="container mx-auto p-6 min-h-screen max-w-lg lg:max-w-2xl">
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            {imageSrc ? (
-              <img src={imageSrc} alt="Profile" className="w-24 h-24 rounded-full" />
-            ) : (
-              <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
+            {(dpLoading || dpPending) ? <ImSpinner8 className='animate-spin text-gray-700 w-20 h-20' /> : (
+              imageSrc ? (
+                <img src={imageSrc} alt="Profile" className="w-24 h-24 rounded-full" />
+              ) : (
+                <CiUser className="w-24 h-24 p-4 bg-gray-200 rounded-full" />
+              )
             )}
             <button onClick={() => imageInputRef.current.click()} className="absolute bottom-1 right-1 bg-gray-300 p-1 rounded-full">
               <HiPencil />
@@ -266,13 +271,14 @@ export default function EmployerDash() {
 
           </div>
         </div>
-
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
-          onClick={handleSave}
-        >
-          Save Changes
-        </button>
+        {profilePending ? <ImSpinner8 className='animate-spin text-gray-700 w-10 h-10' /> : (
+          <button
+            className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+            onClick={handleSave}
+          >
+            Save Changes
+          </button>
+        )}
       </div>
     </div>
   );
