@@ -102,6 +102,13 @@ export default function JobSeekerDash() {
   const handleSave = async (field) => {
     updateProfile
       .mutateAsync(profile)
+      .then(() => {
+        const newIsEditingState = Object.keys(isEditing).reduce((acc, key) => {
+          acc[key] = false;
+          return acc;
+        }, {});
+        setIsEditing(newIsEditingState);
+      })
       .then(() => toast.success('Profile updated successfully'))
     setIsEditing({ ...isEditing, [field]: false });
   };
@@ -196,35 +203,37 @@ export default function JobSeekerDash() {
             </div>
 
           </div>
-          <div className="ml-4">
-            <h2 className="text-2xl font-bold">
-              {isEditing.fullName ? (
-                <input type="text" name="fullName" value={profile.fullName} onChange={handleInputChange} className="border p-1 w-40" />
-              ) : (
-                profile.fullName
-              )}
-              <button onClick={() => handleEditClick('fullName')} className="ml-2 hover:bg-gray-300 text-base p-1 rounded-full">
-                <HiPencil />
-              </button>
-            </h2>
-            <p className="text-gray-600">
-              {isEditing.headline ? (
-                <input type="text" name="headline" value={profile.headline} onChange={handleInputChange} className="border p-1" />
-              ) : (
-                profile.headline
-              )}
-              <button onClick={() => handleEditClick('headline')} className="ml-2 text-black hover:bg-gray-300 text-sm p-1 rounded-full">
-                <HiPencil />
-              </button>
-            </p>
-          </div>
+          {userLoading ? <ImSpinner8 className='ml-12 h-12 w-12 text-gray-700 animate-spin' /> : (
+            <div className="ml-4">
+              <h2 className="text-2xl font-bold">
+                {isEditing.fullName ? (
+                  <input type="text" name="fullName" value={profile.fullName} onChange={handleInputChange} className="border p-1 w-40" />
+                ) : (
+                  profile.fullName
+                )}
+                <button onClick={() => handleEditClick('fullName')} className="ml-2 hover:bg-gray-300 text-base p-1 rounded-full">
+                  <HiPencil />
+                </button>
+              </h2>
+              <p className="text-gray-600">
+                {isEditing.headline ? (
+                  <input type="text" name="headline" value={profile.headline} onChange={handleInputChange} className="border p-1" />
+                ) : (
+                  profile.headline
+                )}
+                <button onClick={() => handleEditClick('headline')} className="ml-2 text-black hover:bg-gray-300 text-sm p-1 rounded-full">
+                  <HiPencil />
+                </button>
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="mb-6">
           <h3 className="text-xl font-bold mb-2">About</h3>
 
           <div>
-            <label className="text-gray-700 mr-2">Skills</label>
+            <label className="text-gray-500 font-semibold mr-2">Skills:</label>
             <button onClick={() => handleEditClick('skills')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
               <HiPencil />
             </button>
@@ -236,7 +245,7 @@ export default function JobSeekerDash() {
           </div>
 
           <div className="mt-4">
-            <label className="text-gray-700 mr-2">Description</label>
+            <label className="text-gray-500 font-semibold mr-2">Description:</label>
             <button onClick={() => handleEditClick('description')} className="hover:bg-gray-300 text-sm p-1 rounded-full">
               <HiPencil />
             </button>
@@ -255,7 +264,7 @@ export default function JobSeekerDash() {
             <HiPencil />
           </button>
           <div>
-            <label className="text-gray-700 mr-2">City</label>
+            <label className="text-gray-500 font-semibold mr-2">City:</label>
             {isEditing.location ? (
               <input type="text" name="city" value={profile.city} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
@@ -264,7 +273,7 @@ export default function JobSeekerDash() {
 
           </div>
           <div className="mt-4">
-            <label className="block text-gray-700">State</label>
+            <label className="block text-gray-500 font-semibold">State:</label>
 
             {isEditing.location ? (
               <input type="text" name="state" value={profile.state} onChange={handleInputChange} className="border p-1 w-full" />
@@ -274,7 +283,7 @@ export default function JobSeekerDash() {
 
           </div>
           <div className="mt-4">
-            <label className="block text-gray-700">Country</label>
+            <label className="block text-gray-500 font-semibold">Country:</label>
             {isEditing.location ? (
               <input type="text" name="country" value={profile.country} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
@@ -290,7 +299,7 @@ export default function JobSeekerDash() {
             <HiPencil />
           </button>
           <div>
-            <label className="block text-gray-700">Email Id:</label>
+            <label className="block text-gray-500 font-semibold">Email Id:</label>
             {isEditing.contact ? (
               <input type="email" name="email" value={profile.email} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
@@ -298,7 +307,7 @@ export default function JobSeekerDash() {
             )}
           </div>
           <div className="mt-4">
-            <label className="block text-gray-700">Mobile No:</label>
+            <label className="block text-gray-500 font-semibold">Mobile No:</label>
             {isEditing.contact ? (
               <input type="text" name="mobile" value={profile.mobile} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
@@ -306,11 +315,11 @@ export default function JobSeekerDash() {
             )}
           </div>
           <div className="mt-4">
-            <label className="block text-gray-700">LinkedIn URL:</label>
+            <label className="block text-gray-500 font-semibold">LinkedIn URL:</label>
             {isEditing.contact ? (
               <input type="url" name="linkedIn" value={profile.linkedIn} onChange={handleInputChange} className="border p-1 w-full" />
             ) : (
-              <p>{profile.linkedIn}</p>
+              <a className='text-blue-600 hover:underline' target='_blank' rel="noreferrer" href={profile.linkedIn}>{profile.linkedIn}</a>
             )}
           </div>
         </div>

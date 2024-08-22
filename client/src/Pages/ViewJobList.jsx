@@ -21,6 +21,8 @@ export default function ViewJobList() {
         mutationFn: deleteJobAPI,
     });
 
+    const { isPending: deletePending } = deleteMutation;
+
     const handleDeleteClick = (job) => {
         setJobToDelete(job);
         setShowModal(true);
@@ -43,7 +45,7 @@ export default function ViewJobList() {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 max-w-3xl">
             <h1 className="text-2xl font-bold mb-4">Posted jobs</h1>
             <div className="space-y-4">
                 {jobsLoading && (
@@ -85,20 +87,22 @@ export default function ViewJobList() {
                         <p>Are you sure you want to delete the job "
                             <span className="font-bold">{jobToDelete.jobTitle}</span>"?
                         </p>
-                        <div className="mt-4 flex space-x-2">
-                            <button
-                                className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded"
-                                onClick={confirmDelete}
-                            >
-                                Confirm
-                            </button>
-                            <button
-                                className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded"
-                                onClick={cancelDelete}
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                        {deletePending ? <ImSpinner8 className="py-2 w-8 h-8 animate-spin" /> : (
+                            <div className="mt-4 flex space-x-2">
+                                <button
+                                    className="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded"
+                                    onClick={confirmDelete}
+                                >
+                                    Confirm
+                                </button>
+                                <button
+                                    className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded"
+                                    onClick={cancelDelete}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

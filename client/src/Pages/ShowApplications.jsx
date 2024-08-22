@@ -45,12 +45,17 @@ export default function ShowApplications() {
       .catch((error) => { console.log(error) })
   };
 
-  if (jobLoading) return <div>Loading...</div>;
-  if (jobError) return <div>Error loading data</div>;
+  if (jobLoading) return (
+    <div className="py-20">
+      <ImSpinner8 className="w-12 h-12 text-gray-700 animate-spin mx-auto" />
+    </div>
+  );
+
+  if (jobError) return <div>Error loading data!</div>;
 
   return (
     <>
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto max-w-3xl p-4">
         <h1 className="text-2xl font-bold mb-4">Job Details</h1>
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-2">{job?.jobTitle}</h2>
@@ -62,7 +67,7 @@ export default function ShowApplications() {
       </div>
 
 
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 max-w-3xl min-h-48 border-2 border-gray-300 rounded-lg mb-8">
         <h1 className="text-2xl font-bold mb-4">Applicant{job?.applicants?.length > 1 ? 's' : ''}</h1>
         <div className="space-y-4">
           {job?.applicants?.length === 0 && <div>No application found!</div>}

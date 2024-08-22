@@ -17,6 +17,7 @@ import MyApplications from './Pages/MyApplications.jsx';
 import ViewJobList from './Pages/ViewJobList.jsx';
 import EditJob from './Pages/EditJob.jsx';
 import ShowApplications from './Pages/ShowApplications.jsx';
+import { ImSpinner8 } from 'react-icons/im';
 
 
 function App() {
@@ -57,7 +58,11 @@ function App() {
   ]);
 
   if (isLoading) {
-    return <h1>Loading...</h1>
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <ImSpinner8 className="w-20 h-20 text-gray-700 animate-spin mx-auto" />
+      </div>
+    )
   }
 
   return (

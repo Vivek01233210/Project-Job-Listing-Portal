@@ -18,7 +18,7 @@ export default function MyApplications() {
             <div className="flex flex-col gap-6">
                 {isLoading && (
                     <div className="py-20">
-                        <ImSpinner8 Name="animate-spin h-10 w-10 mx-auto" />
+                        <ImSpinner8 className="animate-spin h-20 w-20 mx-auto" />
                     </div>
                 )}
                 {data?.data?.length === 0 && <p className="text-center text-lg">You haven't applied anywhere yet!</p>}

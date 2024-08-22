@@ -4,7 +4,7 @@ import { CiUser } from "react-icons/ci";
 import { useRef } from "react";
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { ImSpinner, ImSpinner8 } from "react-icons/im";
+import { ImSpinner8 } from "react-icons/im";
 
 
 export default function JobList() {
@@ -19,11 +19,8 @@ export default function JobList() {
         queryFn: () => getAllJobsAPI({ title: jobTitleRef.current.value, location: locationRef.current.value }),
     });
 
-    // console.log(jobs);
-    // console.log(isLoading);
-
     const applyJobMutation = useMutation({
-        mutationKey: ["login"],
+        mutationKey: ["apply-job"],
         mutationFn: applyJobAPI,
     });
 
@@ -35,7 +32,7 @@ export default function JobList() {
     const handleApply = (jobId) => {
         applyJobMutation
             .mutateAsync({ jobId })
-            // .then(() => refetch())
+            .then(() => refetch())
             .then(() => toast.success("Applied successfully"))
             .catch((err) => toast.error(err.response.data.message));
     };

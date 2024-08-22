@@ -2,8 +2,13 @@ import { useMutation } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { createJobAPI } from '../APIServices/jobAPI.js';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { ImSpinner8 } from 'react-icons/im';
 
 export default function PostJob() {
+
+    const navigate = useNavigate();
+
     const [jobData, setFormData] = useState({
         jobTitle: '',
         description: '',
@@ -19,6 +24,8 @@ export default function PostJob() {
         mutationFn: createJobAPI,
     });
 
+    const { isPending } = createJobMutation;
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -32,6 +39,7 @@ export default function PostJob() {
         createJobMutation
             .mutateAsync(jobData)
             .then(() => { toast.success('Job posted successfully') })
+            .then(() => { navigate('/view-jobs') })
             .catch((error) => { console.log(error) });
         // console.log('Form data submitted:', jobData);
     };
@@ -52,7 +60,7 @@ export default function PostJob() {
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Name of Company/Organization:</label> 
+                    <label className="block text-sm font-medium text-gray-700">Name of Company/Organization:</label>
                     <input
                         type="text"
                         name="companyName"
@@ -114,12 +122,14 @@ export default function PostJob() {
                     />
                 </div>
                 <div className="text-center">
-                    <button
-                        type="submit"
-                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Post Job
-                    </button>
+                    {isPending ? <ImSpinner8 className="w-6 h-6 text-gray-700 animate-spin mx-auto" /> : (
+                        <button
+                            type="submit"
+                            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                            Post Job
+                        </button>
+                    )}
                 </div>
             </form>
         </div>
