@@ -182,7 +182,7 @@ export default function JobSeekerDash() {
       <div className="p-6 rounded shadow-xl">
         <div className="flex items-center mb-6">
           <div className="relative">
-            {dpLoading ? <ImSpinner8 className='h-24 w-24 text-gray-700 animate-spin' /> : (
+            {(dpLoading || updateProfilePic.isPending) ? <ImSpinner8 className='h-24 w-24 text-gray-700 animate-spin' /> : (
               imageSrc ? (
                 <img src={imageSrc} alt="Profile" className="w-24 h-24 shadow-md rounded-full" />
               ) : (
@@ -337,14 +337,16 @@ export default function JobSeekerDash() {
                 {resumeData?.filename} <FaDownload />
               </button>
             }
-            <div className='my-2'>
-              <input type="file" ref={resumeInputRef} name="resume" accept=".pdf" onChange={handleResumeChange} className="hidden" />
-              <button className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
-                onClick={() => resumeInputRef.current.click()}
-              >
-                {resumeData?.data ? 'Update Resume' : 'Upload Resume'}
-              </button>
-            </div>
+            {updateResume.isPending ? <ImSpinner8 className='h-12 w-12 text-gray-700 animate-spin' /> : (
+              <div className='my-2'>
+                <input type="file" ref={resumeInputRef} name="resume" accept=".pdf" onChange={handleResumeChange} className="hidden" />
+                <button className='bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded'
+                  onClick={() => resumeInputRef.current.click()}
+                >
+                  {resumeData?.data ? 'Update Resume' : 'Upload Resume'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         {
