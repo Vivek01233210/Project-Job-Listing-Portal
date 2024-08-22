@@ -74,12 +74,17 @@ export default function ShowApplications() {
           {job?.applicants?.map((applicant) => (
             <div key={applicant?._id} className="p-4 border rounded shadow-sm">
               <h2 className="text-xl font-semibold">{applicant?.fullName}</h2>
-              <p className="text-gray-600">{applicant.headline ? applicant.headline : "-------------"}</p>
+              <p className="text-gray-600 -mt-1 mb-2">{applicant.headline ? applicant.headline : "-------------"}</p>
               <p className="mb-2"><strong>Skills:</strong> {applicant.skills ? applicant.skills : "N/A"}</p>
               <p className="mb-2"><strong>Description:</strong> {applicant.description ? applicant.description : "N/A"}</p>
               <p className="mb-2"><strong>Mobile:</strong> {applicant.mobile ? applicant.mobile : "N/A"}</p>
-              <p className="mb-2"><strong>LinkedIn URL:</strong> {applicant.linkedIn ? applicant.linkedIn : "N/A"}</p>
-              <p className="mb-2"><strong>Address:</strong> {applicant.city},{applicant.state}, {applicant.country} </p>
+              <a  target='_blank' rel="noreferrer" href={applicant.linkedIn}>
+                <strong>LinkedIn URL: </strong>
+                <span className='text-blue-600 hover:underline'>
+                  {applicant.linkedIn ? applicant.linkedIn : "N/A"}
+                </span>
+              </a>
+              <p className="mb-2"><strong>Address:</strong> {applicant.city}, {applicant.state}, {applicant.country} </p>
               {applicant?.resume.data && <button
                 className="bg-blue-500 text-white px-4 py-2 rounded"
                 onClick={() => handleViewResume(applicant?.resume?.data?.data)}
