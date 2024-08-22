@@ -55,7 +55,7 @@ export const getJobByIdWithApplicants = async (req, res) => {
         const job = await Job.findById(jobId)
             .populate({
                 path: 'applicants',
-                select: 'fullName email resume linkedIn mobile city state country headline',
+                select: 'fullName email resume linkedIn mobile city state country headline skills description',
             });
 
         if (!job) {

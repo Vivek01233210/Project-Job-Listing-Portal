@@ -25,7 +25,7 @@ root.render(
         <App />
         <ToastContainer position='top-center' autoClose={1000} />
       </Provider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   </React.StrictMode>,
 );
