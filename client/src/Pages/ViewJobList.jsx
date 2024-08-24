@@ -16,6 +16,8 @@ export default function ViewJobList() {
         queryFn: getMyJobsAPI
     });
 
+    // console.log(jobs);
+
     const deleteMutation = useMutation({
         mutationKey: ["delete-job"],
         mutationFn: deleteJobAPI,
@@ -53,6 +55,7 @@ export default function ViewJobList() {
                         <ImSpinner8 className="w-12 h-12 text-gray-700 animate-spin mx-auto" />
                     </div>
                 )}
+                {jobs?.data?.length===0 && <h3>You haven't posted any jobs yet!</h3>}
                 {jobs?.data?.map((job) => (
                     <div key={job?._id} className="p-4 border rounded shadow-sm">
                         <h2 className="text-xl font-semibold">{job?.jobTitle}</h2>
